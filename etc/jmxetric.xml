@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE jmxetric-config [
+   <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>
+   <!ELEMENT sample (mbean)*>
+      <!ATTLIST sample delay CDATA #REQUIRED>
+   <!ELEMENT mbean (attribute)*>
+      <!ATTLIST mbean name CDATA #REQUIRED>
+      <!ATTLIST mbean pname CDATA #REQUIRED>
+   <!ELEMENT attribute EMPTY>
+      <!ATTLIST attribute name CDATA #REQUIRED>
+      <!ATTLIST attribute type CDATA #REQUIRED>
+      <!ATTLIST attribute units CDATA "" >
+      <!ATTLIST attribute pname CDATA "" >
+   <!ELEMENT ganglia EMPTY>
+      <!ATTLIST ganglia hostname CDATA #REQUIRED>
+      <!ATTLIST ganglia port CDATA #REQUIRED>
+   <!ELEMENT jvm EMPTY>
+      <!ATTLIST jvm pubishName CDATA "">
+]>
+<jmxetric-config>
+	<jvm process="ProcessName"/>
+	<sample delay="300">
+		<mbean name="java.lang:type=Memory" pname="Memory">
+			<attribute name="HeapMemoryUsage.init" pname="Heap_init" type="int32" units="bytes"/>
+			<attribute name="HeapMemoryUsage.committed" pname="Heap_committed" type="int32" units="bytes"/>
+			<attribute name="HeapMemoryUsage.used" pname="Heap_used" type="int32" units="bytes" />
+			<attribute name="HeapMemoryUsage.max" pname="Heap_max" type="int32" units="bytes" />
+			<attribute name="NonHeapMemoryUsage.init" pname="NonHeap_init" type="int32"  units="bytes" />
+			<attribute name="NonHeapMemoryUsage.committed" pname="NonHeap_committed" type="int32" units="bytes" />
+			<attribute name="NonHeapMemoryUsage.used" pname="NonHeap_used" type="int32" units="bytes" />
+			<attribute name="NonHeapMemoryUsage.max" pname="NonHeap_max" type="int32" units="bytes" />
+		</mbean>
+		<mbean name="java.lang:type=Threading" pname="Threading" >
+			<attribute name="ThreadCount" type="int16" />
+			<attribute name="DaemonThreadCount" type="int16" />
+		</mbean>
+	</sample>
+</jmxetric-config>
+
