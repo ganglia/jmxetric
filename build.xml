@@ -11,6 +11,7 @@
 	<property name="thirdparty" location="lib"/>
 	<property name="dist"  location="dist/jmxetric"/>
 	<property name="api" location="${dist}/api"/>
+	<property name="version" value="0.1"/>
 	<property name="findbugs.home"  location="/opt/findbugs-1.2.1" />
 
 	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
@@ -50,10 +51,14 @@
 		<jar jarfile="${dist}/lib/jmxetric.jar" basedir="${build}" manifest="META-INF/MANIFEST.MF"/>
 
 		<copy file="${thirdparty}/oncrpc.jar" toFile="${dist}/lib/oncrpc.jar" />
-		<copy file="README" toFile="${dist}/README" />
+		<copy file="README" toFile="${dist}/README" >
+            <filterset>
+                <filter token="JMXETRIC_VERSION" value="${version}"/>
+            </filterset> 
+        </copy>
 		<copy file="COPYING" toFile="${dist}/COPYING" />
 
-		<zip destfile="jmxetric.zip" basedir="dist" />
+		<zip destfile="jmxetric-${version}.zip" basedir="dist" />
 	</target>
 
 	<target name="clean"
