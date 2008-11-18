@@ -15,7 +15,7 @@
       <!ATTLIST ganglia hostname CDATA #REQUIRED>
       <!ATTLIST ganglia port CDATA #REQUIRED>
    <!ELEMENT jvm EMPTY>
-      <!ATTLIST jvm pubishName CDATA "">
+      <!ATTLIST jvm process CDATA "">
 ]>
 <jmxetric-config>
 	<jvm process="ProcessName"/>
