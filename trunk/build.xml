@@ -1,0 +1,138 @@
+<project name="jmxetric" default="dist" basedir=".">
+	<description>
+		JMXetric is a JVM agent that polls MBeans periodically and reports the values to Ganglia
+	</description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src"/>
+	<property name="src.tests" location="test"/>
+	<property name="reports.tests" location="reports"/>
+	<property name="build" location="build"/>
+	<property name="build.tests" location="buildtest"/>
+	<property name="thirdparty" location="lib"/>
+	<property name="dist"  location="dist/jmxetric"/>
+	<property name="api" location="${dist}/api"/>
+	<property name="version" value="0.1"/>
+	<property name="findbugs.home"  location="/opt/findbugs-1.2.1" />
+
+	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+
+	<path id="project.class.path">
+		<pathelement path="${thirdparty}/oncrpc.jar"/>
+	</path>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.tests}"/>
+		<mkdir dir="${reports.tests}"/>
+		<mkdir dir="${reports.tests}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+
+	<target name="compile" depends="init"
+		description="compile the source " >
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" classpathref="project.class.path" destdir="${build}"/>
+		<javac srcdir="${src.tests}" destdir="${build.tests}">
+		  <classpath>
+			<pathelement location="${build}"/>
+			<pathelement path="${project.class.path}"/>
+		  </classpath>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile,javadoc"
+		description="generate the distribution" >
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}/lib"/>
+
+		<jar jarfile="${dist}/lib/jmxetric.jar" basedir="${build}" manifest="META-INF/MANIFEST.MF"/>
+
+		<copy file="${thirdparty}/oncrpc.jar" toFile="${dist}/lib/oncrpc.jar" />
+		<copy file="README" toFile="${dist}/README" >
+            <filterset>
+                <filter token="JMXETRIC_VERSION" value="${version}"/>
+            </filterset> 
+        </copy>
+		<copy file="COPYING" toFile="${dist}/COPYING" />
+
+		<zip destfile="jmxetric-${version}.zip" basedir="dist" />
+	</target>
+
+	<target name="clean"
+		description="clean up" >
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}"/>
+		<delete dir="${build.tests}"/>
+		<delete dir="${reports.tests}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="test" depends="compile">
+		<junit printsummary="yes" haltonfailure="yes">
+		  <classpath>
+			<pathelement location="${build}"/>
+			<pathelement location="${build.tests}"/>
+			<pathelement path="${thirdparty}/oncrpc.jar"/>
+		  </classpath>
+
+		  <formatter type="plain"/>
+
+		  <batchtest fork="no" todir="${reports.tests}">
+			<fileset dir="${src.tests}">
+			  <include name="**/*Test.java"/>
+			</fileset>
+		  </batchtest>
+		</junit>
+	</target>
+
+	<target name="jdepend" depends="compile">
+
+		<jdepend format="xml" outputfile="${reports.tests}/jdepend-report.xml">
+		<exclude name="java.*"/>
+		<exclude name="javax.*"/>
+		<classespath>
+		<pathelement location="build" />
+		</classespath>
+		<classpath location="build" />
+		</jdepend>
+
+		<xslt basedir="${reports.tests}" destdir="${reports.tests}"
+		includes="jdepend-report.xml" 
+		style="${ant.home}/etc/jdepend.xsl" />
+
+	</target>
+
+	<target name="findbugs" depends="dist">
+		<findbugs home="${findbugs.home}"
+			output="html"
+			outputFile="reports/fb.html" >
+		<auxClasspath>
+			<pathelement path="${thirdparty}/oncrpc.jar"/>
+		</auxClasspath>
+		<sourcePath path="${basedir}/src" />
+		<class location="${dist}/lib/jmxetric.jar" />
+		</findbugs>
+	</target>
+
+	<target name="javadoc" depends="compile" description="Generate JavaDocs." >
+    <javadoc
+        destdir="${api}"
+        author="true"
+        version="true"
+        use="true"
+        windowtitle="${ant.project.name}"
+        sourcepath="${src}"
+        classpathref="project.class.path"
+        packagenames="*"
+        verbose="false">
+        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
+        <bottom>
+            <![CDATA[<i>Copyright &#169; 2008 Jasper Humphrey All Rights Reserved.</i>]]>
+        </bottom>
+        <tag name="todo" scope="all" description="To do:"/>
+    </javadoc>
+</target>
+</project>
