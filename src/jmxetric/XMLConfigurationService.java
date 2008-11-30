@@ -2,6 +2,8 @@ package jmxetric;
 
 import ganglia.gmetric.GMetric;
 import ganglia.gmetric.GMetricType;
+import ganglia.gmetric.GMetric.UDPAddressingMode;
+
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +24,8 @@ public class XMLConfigurationService {
     private final static XPath xpath = XPathFactory.newInstance().newXPath();
     
     private static final String DEFAULT_CONFIG="jmxetric.xml";
+    private static final String DEFAULT_MODE="multicast";
+    
     /**
      * Configures the JMXetricAgent based on the supplied agent args
      * @param agent the agent to configure
@@ -31,7 +35,9 @@ public class XMLConfigurationService {
     public static void configure(JMXetricAgent agent, String agentArgs) throws Exception {
         String host = null ;
         String port = null ;
+        String mode = null ;
         String config = DEFAULT_CONFIG ;
+        String wireformat = null ;
         String processName = null ;
         
         if ( agentArgs != null ) {
@@ -39,15 +45,20 @@ public class XMLConfigurationService {
             host = getTagValue( "host", args, null );
             port = getTagValue( "port", args, null );
             config = getTagValue( "config", args, DEFAULT_CONFIG );
+            mode = getTagValue( "mode", args, DEFAULT_MODE );
+            wireformat = getTagValue( "wireformat31x", args, "false");
             processName = getTagValue( "process", args, null );
         }
 
         log.config("Command line argument found: host=" + host );
         log.config("Command line args: port=" + port );
         log.config("Command line args: config=" + config );
+        log.config("Command line args: mode=" + mode );
+        log.config("Command line args: wireformat31x=" + wireformat );
         InputSource inputSource = new InputSource(config);
 
-        configureGangliaFromXML( agent, inputSource, host, port);
+        configureGangliaFromXML( agent, inputSource, host, port, mode, 
+        		Boolean.parseBoolean(wireformat));
         configureJMXetricFromXML( agent, inputSource, config, processName );
     }
 
@@ -79,11 +90,13 @@ public class XMLConfigurationService {
      * @param inputSource the input xml
      * @param cmdLineHost the host found on the agent arg list
      * @param cmdLinePort the port found on the agent arg list
+     * @param cmdLineMode the mode found on the agent arg list
+     * @param v31x true if the ganglia v31x wire format should be used
      * @throws java.lang.Exception
      */
     private static void configureGangliaFromXML(JMXetricAgent agent, 
             InputSource inputSource, String cmdLineHost, 
-            String cmdLinePort) throws Exception {
+            String cmdLinePort, String cmdLineMode, boolean v31x) throws Exception {
         // Gets the config for ganglia
         // Note that the ganglia config needs to be found before the samplers 
         // are created.
@@ -102,7 +115,16 @@ public class XMLConfigurationService {
         else
             port = g.getAttributes().getNamedItem("port").getNodeValue();
         int iport = Integer.parseInt(port);
-        GMetric gmetric = new GMetric(hostname, iport);
+        String mode = null ;
+        if ( cmdLineMode != null )
+        	mode = cmdLineMode ;
+        else 
+        	mode = g.getAttributes().getNamedItem("mode").getNodeValue();
+        UDPAddressingMode addressingMode = UDPAddressingMode.MULTICAST;
+        if ( mode.toLowerCase().equals("unicast")) {
+        	addressingMode = UDPAddressingMode.UNICAST;
+        }
+        GMetric gmetric = new GMetric(hostname, iport, addressingMode, v31x );
         agent.setGmetric(gmetric);
     }
     /**

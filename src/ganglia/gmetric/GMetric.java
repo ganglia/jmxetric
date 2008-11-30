@@ -1,34 +1,37 @@
 
 package ganglia.gmetric;
 
-import ganglia.xdr.Ganglia_gmetric_message;
-import ganglia.xdr.Ganglia_message;
-import ganglia.xdr.Ganglia_message_formats;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import org.acplt.oncrpc.XdrBufferEncodingStream;
 
 /**
  * Implements the Ganglia gmetric command in java
  */
 public class GMetric {
-
-    private int port = 0 ;
-    private String group = null ;
-    private InetAddress multicastAddr = null ;
-    private int ttl = 1 ;
-    private MulticastSocket socket = null ;
-    private static final int MAX_BUFFER_SIZE = 1024 ;
-    private XdrBufferEncodingStream xdr = new XdrBufferEncodingStream( MAX_BUFFER_SIZE );
+	public enum UDPAddressingMode {
+		MULTICAST,
+		UNICAST
+	};
+	
+    private Protocol protocol ;
+    
     /**
      * Constructs a GMetric 
-     * @param group the multicast group to send the event to
-     * @param port the multicast port to send the event to
+     * @param group the host/group to send the event to
+     * @param port the port to send the event to
+     * @param mode the mode
      */
-    public GMetric( String group, int port) {
-        this.group = group ;
-        this.port = port ;
+    public GMetric( String group, int port, UDPAddressingMode mode) {
+    	this( group, port, mode, false );
+    }
+    /**
+     * Constructs a GMetric 
+     * @param group the host/group to send the event to
+     * @param port the port to send the event to
+     */
+    public GMetric( String group, int port, UDPAddressingMode mode, boolean ganglia311) {
+    	if ( ! ganglia311 )
+    		this.protocol = new v30xProtocol( group, port, mode );
+    	else
+    		this.protocol = new v311Protocol( group, port, mode, 5 );
     }
     /**
      * The Ganglia Metric Client (gmetric) announces a metric
@@ -39,6 +42,7 @@ public class GMetric {
      * @param slope Either zero|positive|negative|both
      * @param tmax  The maximum time in seconds between gmetric calls 
      * @param dmax The lifetime in seconds of this metric
+     * @param group Group Name of the metric
      * @throws java.lang.Exception
      */
     public void announce( String name, 
@@ -47,21 +51,11 @@ public class GMetric {
             String units,
             GMetricSlope slope,
             int tmax,
-            int dmax ) throws GangliaException {
+            int dmax,
+            String group ) throws GangliaException {
         try {
-            byte[] msg = encodeGMetric( name, value, type, units, slope, tmax, dmax );
-
-            if (multicastAddr == null )
-                multicastAddr = InetAddress.getByName( group ) ;
-
-            DatagramPacket packet = new DatagramPacket( msg, xdr.getXdrLength(),
-                                    multicastAddr, port) ;
-
-            if ( socket == null ) {
-                socket = new MulticastSocket() ;
-                socket.setTimeToLive(ttl);
-            }
-            socket.send( packet ) ;
+        	protocol.announce( name, value, type, 
+        			units, slope, tmax, dmax, group);
         } catch ( Exception ex ) {
             throw new GangliaException( "Exception announcing metric", ex ) ;
         }
@@ -70,70 +64,45 @@ public class GMetric {
      * Announces a metric
      * @param name Name of the metric 
      * @param value Value of the metric
+     * @param group Group Name of the metric
      * @throws ganglia.GangliaException
      */
     public void announce( String name, 
-            int value ) throws GangliaException {
-        this.announce(name, Integer.toString(value),GMetricType.INT32, "", GMetricSlope.BOTH, 60, 0);
+            int value, String group ) throws GangliaException {
+        this.announce(name, Integer.toString(value),GMetricType.INT32, "", GMetricSlope.BOTH, 60, 0, group);
     }
     /**
      * Announces a metric
      * @param name Name of the metric 
      * @param value Value of the metric
+     * @param group Group Name of the metric
      * @throws ganglia.GangliaException
      */
     public void announce( String name, 
-            long value ) throws GangliaException {
-        this.announce(name, Long.toString(value),GMetricType.DOUBLE, "", GMetricSlope.BOTH, 60, 0);
+            long value, String group  ) throws GangliaException {
+        this.announce(name, Long.toString(value),GMetricType.DOUBLE, "", GMetricSlope.BOTH, 60, 0, group );
     }
     /**
      * Announces a metric
      * @param name Name of the metric 
      * @param value Value of the metric
+     * @param group Group Name of the metric
      * @throws ganglia.GangliaException
      */
     public void announce( String name, 
-            float value ) throws GangliaException {
-        this.announce(name, Float.toString(value),GMetricType.FLOAT, "", GMetricSlope.BOTH, 60, 0);
+            float value, String group ) throws GangliaException {
+        this.announce(name, Float.toString(value),GMetricType.FLOAT, "", GMetricSlope.BOTH, 60, 0, group);
     }
     /**
      * Announces a metric
      * @param name Name of the metric 
      * @param value Value of the metric
+     * @param group Group Name of the metric
      * @throws ganglia.GangliaException
      */
     public void announce( String name, 
-            double value ) throws GangliaException {
-        this.announce(name, Double.toString(value),GMetricType.DOUBLE, "", GMetricSlope.BOTH, 60, 0);
-    }
-    /**
-     * Encodes the metric using the classes generated by remotetea
-     */
-    private byte[] encodeGMetric( String name, 
-            String value, 
-            GMetricType type,
-            String units,
-            GMetricSlope slope,
-            int tmax,
-            int dmax )
-            throws Exception {
-        Ganglia_message msg = new Ganglia_message() ;
-        Ganglia_gmetric_message gmetric_msg = new Ganglia_gmetric_message() ;
-        
-        msg.id = Ganglia_message_formats.metric_user_defined ;
-        msg.gmetric = gmetric_msg ;
-        gmetric_msg.name = name ;
-        gmetric_msg.value = value ;
-        gmetric_msg.type = type.getGangliaType() ;
-        gmetric_msg.units = units ;
-        gmetric_msg.slope = slope.getGangliaSlope() ;
-        gmetric_msg.tmax = tmax ;
-        gmetric_msg.dmax = dmax ;
-        
-        xdr.beginEncoding(multicastAddr, port) ;
-        msg.xdrEncode(xdr);
-        xdr.endEncoding();
-        return xdr.getXdrData();
+            double value, String group ) throws GangliaException {
+        this.announce(name, Double.toString(value),GMetricType.DOUBLE, "", GMetricSlope.BOTH, 60, 0, group);
     }
     /**
      * Main method that sends a test metric
@@ -141,13 +110,13 @@ public class GMetric {
      */
     public static void main( String[] args ) {
         try {
-            GMetric gm = new GMetric("127.0.0.1", 8649) ;
+            GMetric gm = new GMetric("127.0.0.1", 8649, UDPAddressingMode.MULTICAST) ;
             gm.announce("BOILINGPOINT", "100", GMetricType.STRING, 
-                    "CELSIUS", GMetricSlope.BOTH, 0,0);
-            gm.announce("INTTEST", (int)Integer.MAX_VALUE ) ;
-            gm.announce("LONGTEST", (long)Long.MAX_VALUE );
-            gm.announce("FLOATTEST", (float)Float.MAX_VALUE ) ;
-            gm.announce("DOUBLETEST", (double)Double.MAX_VALUE ) ;
+                    "CELSIUS", GMetricSlope.BOTH, 0,0, "TESTGROUP");
+            gm.announce("INTTEST", (int)Integer.MAX_VALUE, "TESTGROUP" ) ;
+            gm.announce("LONGTEST", (long)Long.MAX_VALUE, "TESTGROUP" );
+            gm.announce("FLOATTEST", (float)Float.MAX_VALUE, "TESTGROUP" ) ;
+            gm.announce("DOUBLETEST", (double)Double.MAX_VALUE, "TESTGROUP" ) ;
         } catch ( Exception ex ) {
             ex.printStackTrace() ;
         }

@@ -1,21 +1,22 @@
 package ganglia.gmetric;
 
+import static org.junit.Assert.assertEquals;
+import ganglia.gmetric.GMetric.UDPAddressingMode;
+
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
 import java.io.InputStreamReader;
 import java.net.Socket;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -27,21 +28,9 @@ public class GMetricTest {
     public GMetricTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
     @Before
     public void setUp() {
-        instance = new GMetric("localhost", 8649);
-    }
-
-    @After
-    public void tearDown() {
+        instance = new GMetric("localhost", 8649, UDPAddressingMode.MULTICAST, true);
     }
 
     /**
@@ -57,8 +46,7 @@ public class GMetricTest {
         GMetricSlope slope = GMetricSlope.BOTH;
         int tmax = 60;
         int dmax = 0;
-        instance.announce(name, value, type, units, slope, tmax, dmax);
-        // TODO review the generated test code and remove the default call to fail.
+        instance.announce(name, value, type, units, slope, tmax, dmax, "STRINGGROUP");
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, readValue.value);
         assertEquals(type.getGangliaType(), readValue.type);
@@ -73,7 +61,7 @@ public class GMetricTest {
         System.out.println("announceInt");
         String name = "TESTINT";
         int value = 334567 ;
-        instance.announce(name, value );
+        instance.announce(name, value, "INTGROUP" );
         // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Integer.valueOf(readValue.value));
@@ -87,7 +75,7 @@ public class GMetricTest {
         System.out.println("announceLong");
         String name = "TESTLONG";
         long value = 334567 ;
-        instance.announce(name, value );
+        instance.announce(name, value, "LONGGROUP" );
         // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Long.valueOf(readValue.value));
@@ -101,7 +89,7 @@ public class GMetricTest {
         System.out.println("announceFloat");
         String name = "TESTFLOAT";
         float value = 334567.543f ;
-        instance.announce(name, value );
+        instance.announce(name, value, "FLOATGROUP" );
         // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Float.valueOf(readValue.value));
@@ -115,7 +103,7 @@ public class GMetricTest {
         System.out.println("announceDouble");
         String name = "TESTDOUBLE";
         double value = 334567.54355555 ;
-        instance.announce(name, value );
+        instance.announce(name, value, "DOUBLEGROUP" );
         // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Double.valueOf(readValue.value));

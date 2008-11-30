@@ -11,7 +11,7 @@
 	<property name="thirdparty" location="lib"/>
 	<property name="dist"  location="dist/jmxetric"/>
 	<property name="api" location="${dist}/api"/>
-	<property name="version" value="0.1"/>
+	<property name="version" value="0.2"/>
 	<property name="findbugs.home"  location="/opt/findbugs-1.2.1" />
 
 	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
@@ -134,5 +134,5 @@
         </bottom>
         <tag name="todo" scope="all" description="To do:"/>
     </javadoc>
-</target>
+	</target>
 </project>

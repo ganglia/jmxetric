@@ -136,7 +136,8 @@ public class MBeanSampler implements Runnable {
                 }
                 GMetric gm = getGMetric();
                 log.finer("Announcing metric " + publishName + "=" + value +"("+ getUnits() +")" );
-                gm.announce(publishName, value, getType(), getUnits(), GMetricSlope.BOTH, 60, 0);
+                gm.announce(publishName, value, getType(), getUnits(), 
+                		GMetricSlope.BOTH, 60, 0, process);
             } catch (Exception ex) {
                 log.warning("Exception when getting " + canonicalName);
                 ex.printStackTrace();

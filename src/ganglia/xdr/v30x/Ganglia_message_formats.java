@@ -3,7 +3,7 @@
  * jrpcgen is part of the "Remote Tea" ONC/RPC package for Java
  * See http://remotetea.sourceforge.net for details
  */
-package ganglia.xdr;
+package ganglia.xdr.v30x;
 /**
  * Enumeration (collection of constants).
  */

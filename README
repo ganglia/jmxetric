@@ -35,6 +35,10 @@ Configuration
                   ganglia gmond process
 
     config        The full path to the config file (jmxetric.xml)
+    
+	mode          The UDP addressing mode, either multicast or unicast (default multicast)
+	
+	wireformat31x True if the ganglia v3.1.x wire format should be used (default false)
 
     process       A name that is prefixed to the metric name before publication 
                   (so that metrics from different JVMs on the same host can be 
@@ -75,6 +79,8 @@ Configuration
        <!ELEMENT ganglia EMPTY>
           <!ATTLIST ganglia hostname CDATA #REQUIRED>
           <!ATTLIST ganglia port CDATA #REQUIRED>
+          <!ATTLIST ganglia mode CDATA #REQUIRED>
+          <!ATTLIST ganglia wireformat31x CDATA #REQUIRED>
        <!ELEMENT jvm EMPTY>
           <!ATTLIST jvm pubishName CDATA "">
     ]>
