@@ -57,6 +57,7 @@
             </filterset> 
         </copy>
 		<copy file="COPYING" toFile="${dist}/COPYING" />
+		<copy file="CHANGES" toFile="${dist}/CHANGES" />
 
 		<zip destfile="jmxetric-${version}.zip" basedir="dist" />
 	</target>
