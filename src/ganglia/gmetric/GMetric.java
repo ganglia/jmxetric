@@ -29,9 +29,9 @@ public class GMetric {
      */
     public GMetric( String group, int port, UDPAddressingMode mode, boolean ganglia311) {
     	if ( ! ganglia311 )
-    		this.protocol = new v30xProtocol( group, port, mode );
+    		this.protocol = new Protocolv30x( group, port, mode );
     	else
-    		this.protocol = new v311Protocol( group, port, mode, 5 );
+    		this.protocol = new Protocolv31x( group, port, mode, 5 );
     }
     /**
      * The Ganglia Metric Client (gmetric) announces a metric

@@ -62,7 +62,6 @@ public class GMetricTest {
         String name = "TESTINT";
         int value = 334567 ;
         instance.announce(name, value, "INTGROUP" );
-        // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Integer.valueOf(readValue.value));
         assertEquals(GMetricType.INT32.getGangliaType(), readValue.type);
@@ -76,7 +75,6 @@ public class GMetricTest {
         String name = "TESTLONG";
         long value = 334567 ;
         instance.announce(name, value, "LONGGROUP" );
-        // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Long.valueOf(readValue.value));
         assertEquals(GMetricType.DOUBLE.getGangliaType(), readValue.type);
@@ -90,7 +88,6 @@ public class GMetricTest {
         String name = "TESTFLOAT";
         float value = 334567.543f ;
         instance.announce(name, value, "FLOATGROUP" );
-        // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Float.valueOf(readValue.value));
         assertEquals(GMetricType.FLOAT.getGangliaType(), readValue.type);
@@ -104,7 +101,6 @@ public class GMetricTest {
         String name = "TESTDOUBLE";
         double value = 334567.54355555 ;
         instance.announce(name, value, "DOUBLEGROUP" );
-        // TODO review the generated test code and remove the default call to fail.
         GMetricDetail readValue = getGMetric(name);
         assertEquals(value, Double.valueOf(readValue.value));
         assertEquals(GMetricType.DOUBLE.getGangliaType(), readValue.type);

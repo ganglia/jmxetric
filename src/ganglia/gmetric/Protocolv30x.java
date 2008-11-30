@@ -7,12 +7,12 @@ import ganglia.xdr.v30x.Ganglia_message_formats;
 
 import org.acplt.oncrpc.XdrBufferEncodingStream;
 
-public class v30xProtocol extends AbstractProtocol {
+public class Protocolv30x extends AbstractProtocol {
 
 	private static final int MAX_BUFFER_SIZE = 1024 ;
     private XdrBufferEncodingStream xdr = new XdrBufferEncodingStream( MAX_BUFFER_SIZE );
     
-    public v30xProtocol( String group, int port, UDPAddressingMode mode ) {
+    public Protocolv30x( String group, int port, UDPAddressingMode mode ) {
     	super(group, port, mode);
     }
     

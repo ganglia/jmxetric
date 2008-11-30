@@ -15,13 +15,13 @@ import ganglia.xdr.v31x.Ganglia_metric_id;
 import ganglia.xdr.v31x.Ganglia_msg_formats;
 import ganglia.xdr.v31x.Ganglia_value_msg;
 
-public class v311Protocol extends AbstractProtocol {
+public class Protocolv31x extends AbstractProtocol {
 	private static final int MAX_BUFFER_SIZE = 1024 ;
     private XdrBufferEncodingStream xdr = new XdrBufferEncodingStream( MAX_BUFFER_SIZE );
     private Map<String,Integer> metricCounterMap = new HashMap<String, Integer>();
     private int metadataMessageInterval;
 
-	public v311Protocol(String group, int port, UDPAddressingMode mode, 
+	public Protocolv31x(String group, int port, UDPAddressingMode mode, 
 			int metadataMessageInterval ) {
 		super(group, port, mode);
 		this.metadataMessageInterval = metadataMessageInterval ;
