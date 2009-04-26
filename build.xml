@@ -12,12 +12,13 @@
 	<property name="dist"  location="dist/jmxetric"/>
 	<property name="api" location="${dist}/api"/>
 	<property name="version" value="0.2"/>
-	<property name="findbugs.home"  location="/opt/findbugs-1.2.1" />
+	<property name="findbugs.home"  location="/opt/findbugs-1.3.8" />
 
 	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
 
 	<path id="project.class.path">
 		<pathelement path="${thirdparty}/oncrpc.jar"/>
+		<pathelement path="${thirdparty}/junit-4.1.jar"/>
 	</path>
 
 	<target name="init">
@@ -27,18 +28,17 @@
 		<mkdir dir="${build}"/>
 		<mkdir dir="${build.tests}"/>
 		<mkdir dir="${reports.tests}"/>
-		<mkdir dir="${reports.tests}"/>
 		<mkdir dir="${dist}"/>
 	</target>
 
 	<target name="compile" depends="init"
 		description="compile the source " >
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" classpathref="project.class.path" destdir="${build}"/>
-		<javac srcdir="${src.tests}" destdir="${build.tests}">
+		<javac target="1.5" srcdir="${src}" classpathref="project.class.path" destdir="${build}"/>
+		<javac target="1.5" srcdir="${src.tests}" destdir="${build.tests}">
 		  <classpath>
 			<pathelement location="${build}"/>
-			<pathelement path="${project.class.path}"/>
+			<path refid="project.class.path"/>
 		  </classpath>
 		</javac>
 	</target>
