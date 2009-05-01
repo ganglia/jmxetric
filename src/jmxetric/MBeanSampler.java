@@ -1,14 +1,14 @@
 package jmxetric;
 
-import ganglia.gmetric.GMetric;
-import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
+
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -27,7 +27,7 @@ public class MBeanSampler implements Runnable {
     private Map<String, MBeanHolder> mbeanMap = new HashMap<String, MBeanHolder>();
     private int delay;
     private MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-    private GMetric gmetric = null;
+    private Publisher publisher = null;
     private String process = null ;
 
     /**
@@ -82,12 +82,12 @@ public class MBeanSampler implements Runnable {
         }
     }
 
-    public GMetric getGMetric() {
-        return gmetric;
+    public Publisher getPublisher() {
+        return publisher;
     }
 
-    public void setGMetric(GMetric gmetric) {
-        this.gmetric = gmetric;
+    public void setPublisher(Publisher publisher) {
+        this.publisher = publisher;
     }
 
     /**
@@ -134,10 +134,9 @@ public class MBeanSampler implements Runnable {
                     log.fine("Sampling " + objectName +
                             " attribute " + canonicalName + ":" + o);
                 }
-                GMetric gm = getGMetric();
+                Publisher gm = getPublisher();
                 log.finer("Announcing metric " + publishName + "=" + value +"("+ getUnits() +")" );
-                gm.announce(publishName, value, getType(), getUnits(), 
-                		GMetricSlope.BOTH, 60, 0, process);
+                gm.publish(process, publishName, value, getType(), getUnits());
             } catch (Exception ex) {
                 log.warning("Exception when getting " + canonicalName);
                 ex.printStackTrace();

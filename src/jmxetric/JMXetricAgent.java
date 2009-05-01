@@ -64,7 +64,7 @@ public class JMXetricAgent {
      */
     public void addSampler(MBeanSampler s) {
         samplers.add(s);
-        s.setGMetric(gmetric);
+        s.setPublisher( new GMetricPublisher(gmetric));
     }
     /**
      * Returns the daemon status of the scheduler thread
