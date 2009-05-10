@@ -144,6 +144,9 @@ public class GMetricTest {
         // xmlReader.setErrorHandler(new MyErrorHandler(System.err));
 
         xmlReader.parse(new InputSource(br_car));
+        in.close();
+        gangliaXMLSocket.close();
+        
         return handler.getDetail() ;
     }
 

@@ -25,7 +25,6 @@ public class MBeanSamplerTest {
 	{
 		Map<String, String> results = new HashMap<String,String>();
 
-		@Override
 		public void publish(String processName, String attributeName,
 				String value, GMetricType type, String units)
 				throws GangliaException {
@@ -41,7 +40,7 @@ public class MBeanSamplerTest {
 	public void setUp() throws Exception {
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
 		ObjectName name = new ObjectName(BEAN_NAME); 
-		TestExample mbean = new TestExample(); 
+		Example mbean = new Example(); 
 		mbs.registerMBean(mbean, name);
 	}
 	@After
@@ -61,7 +60,7 @@ public class MBeanSamplerTest {
         sampler.addMBeanAttribute(BEAN_NAME, "Long", GMetricType.INT32, "bytes", "Longer");
         sampler.run() ;
         String value = publisher.getResult("Longer");
-        assertEquals( TestExample.LONG_VALUE, Long.valueOf(value ));
+        assertEquals( Example.LONG_VALUE, Long.valueOf(value ));
     }
     /**
      * Test of attribute sample, type String
@@ -74,7 +73,7 @@ public class MBeanSamplerTest {
         sampler.addMBeanAttribute(BEAN_NAME, "Composite","name", GMetricType.STRING, "bytes", "name");
         sampler.run() ;
         String value = publisher.getResult("name");
-        assertEquals( TestComposite.STRING_VALUE, value );
+        assertEquals( ExampleComposite.STRING_VALUE, value );
     }
     
 }

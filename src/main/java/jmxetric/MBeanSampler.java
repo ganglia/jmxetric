@@ -116,12 +116,12 @@ public class MBeanSampler implements Runnable {
 
         public MBeanAttribute(String attributeName, String compositeKey, GMetricType type, 
                                 String units, String publishName ) {
-            this.canonicalName = attributeName + "." + key;
+            this.key = compositeKey ;
+            this.canonicalName = attributeName + "." + compositeKey ;
             this.attributeName = attributeName;
             this.units = units ;
             this.type = type ;
             this.publishName = publishName ;
-            this.key = compositeKey ;
         }
         public MBeanAttribute(String attributeName, GMetricType type, 
                 String units, String publishName ) {
@@ -182,7 +182,11 @@ public class MBeanSampler implements Runnable {
 
         @Override
         public boolean equals(Object obj) {
-            return attributeName.equals(obj);
+            if (obj == null) return false;
+            if (obj == this) return true;
+            if (this.getClass() != obj.getClass()) return false;
+            MBeanAttribute attribute = (MBeanAttribute)obj ;
+            return attributeName.equals(attribute.getAttributeName());
         }
 
         @Override

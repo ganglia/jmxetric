@@ -1,8 +1,6 @@
 package jmxetric;
 
-import java.beans.ConstructorProperties;
 import java.lang.management.ManagementFactory;
-import java.util.Date;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -12,38 +10,32 @@ import javax.management.ObjectName;
  * @author humphrej
  *
  */
-public class TestExample implements TestExampleMXBean {
-	@Override
+public class Example implements TestExampleMXBean {
 	public double getDouble() {
 		return DOUBLE_VALUE ;
 	}
-	@Override
 	public float getFloat() {
 		return FLOAT_VALUE;
 	}
-	@Override
 	public int getInt() {
 		return INT_VALUE;
 	}
-	@Override
 	public long getLong() {
 		return LONG_VALUE;
 	}
-	@Override
 	public String getString() {
 		return STRING_VALUE;
 	}
-	@Override
-	public TestComposite getComposite() {
-		return new TestComposite(TestComposite.DATE_VALUE, 
-				TestComposite.INT_VALUE,
-				TestComposite.STRING_VALUE);
+	public ExampleComposite getComposite() {
+		return new ExampleComposite(ExampleComposite.DATE_VALUE, 
+				ExampleComposite.INT_VALUE,
+				ExampleComposite.STRING_VALUE);
 	}
 	public static void register() {
 		try {
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
 		ObjectName name = new ObjectName("jmxetric:type=TestExample"); 
-		TestExample mbean = new TestExample(); 
+		Example mbean = new Example(); 
 		mbs.registerMBean(mbean, name);
 		} catch (Exception ex ){
 			ex.printStackTrace();

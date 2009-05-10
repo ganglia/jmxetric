@@ -8,7 +8,7 @@ import java.util.Date;
  * @author humphrej
  *
  */
-public class TestComposite {
+public class ExampleComposite {
 	
 	public static final Date DATE_VALUE=new Date(1000);
 	public static final int INT_VALUE=29111974;
@@ -19,7 +19,7 @@ public class TestComposite {
     private final String name; 
      
     @ConstructorProperties({"date", "integer", "name"}) 
-    public TestComposite(Date date, int integer, String name) { 
+    public ExampleComposite(Date date, int integer, String name) { 
         this.date = date; 
         this.integer = integer; 
         this.name = name; 

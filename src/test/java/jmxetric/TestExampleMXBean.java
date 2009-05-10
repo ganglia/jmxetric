@@ -18,6 +18,6 @@ public interface TestExampleMXBean {
 	String getString() ;
 	double getDouble() ;
 	float getFloat() ;
-	TestComposite getComposite();
+	ExampleComposite getComposite();
 }
 

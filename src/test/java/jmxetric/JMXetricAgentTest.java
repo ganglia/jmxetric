@@ -18,7 +18,7 @@ public class JMXetricAgentTest {
 	public void setUp() throws Exception {
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
 		ObjectName name = new ObjectName("jmxetric:type=TestExample"); 
-		TestExample mbean = new TestExample(); 
+		Example mbean = new Example(); 
 		mbs.registerMBean(mbean, name);
 	}
 

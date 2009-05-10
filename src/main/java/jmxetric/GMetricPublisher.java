@@ -11,7 +11,7 @@ public class GMetricPublisher implements Publisher {
 	public GMetricPublisher( GMetric gm ) {
 		this.gm = gm ;
 	}
-	@Override
+
 	public void publish(String processName, String attributeName, String value,
 			GMetricType type, String units) throws GangliaException {
         gm.announce(attributeName, value, type, units, 
