@@ -27,7 +27,7 @@ public class JMXetricAgentTest {
         JMXetricAgent a = null ;
         try {
             a = new JMXetricAgent();
-            XMLConfigurationService.configure(a, "host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric_test.xml");
+            XMLConfigurationService.configure(a, "host=localhost,port=8649,wireformat31x=true,config=src/test/resources/jmxetric_test.xml");
             a.start();
             Thread.sleep(1000);
             // TODO Add asserts
