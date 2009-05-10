@@ -108,7 +108,7 @@ public class GMetricTest {
     
     final private static int buffSize = 1024 * 50;
 
-    private GMetricDetail getGMetric(String metricName) throws Exception {
+    private  GMetricDetail getGMetric(String metricName) throws Exception {
         // Open the socket, get the XML
         Socket gangliaXMLSocket = new Socket("localhost", 8649);
         BufferedReader in = new BufferedReader(new InputStreamReader(

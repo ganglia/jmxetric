@@ -52,10 +52,11 @@ public class MBeanSampler implements Runnable {
      * Adds a mbean name/attribute pair to be sampled
      * @param mbean the name of the mbean
      * @param attribute the name of the attribute
+     * @param composite the name of the composite
      * @param publishName the name to publish this attribute on
      * @throws java.lang.Exception
      */
-    public void addMBeanAttribute(String mbean, String attribute, 
+    public void addMBeanAttribute(String mbean, String attribute, String composite, 
                 GMetricType type, String units, String publishName ) throws Exception {
         MBeanHolder mbeanHolder = mbeanMap.get(mbean);
         if (mbeanHolder == null) {
@@ -63,7 +64,18 @@ public class MBeanSampler implements Runnable {
             mbeanMap.put(mbean, mbeanHolder);
         }
 
-        mbeanHolder.addAttribute(attribute, type, units, publishName);
+        mbeanHolder.addAttribute(attribute, composite, type, units, publishName);
+    }
+    /**
+     * Adds a mbean name/attribute pair to be sampled
+     * @param mbean the name of the mbean
+     * @param attribute the name of the attribute
+     * @param publishName the name to publish this attribute on
+     * @throws java.lang.Exception
+     */
+    public void addMBeanAttribute(String mbean, String attribute, 
+                GMetricType type, String units, String publishName ) throws Exception {
+        addMBeanAttribute( mbean, attribute, null, type, units,publishName );
     }
 
     /**
@@ -102,19 +114,18 @@ public class MBeanSampler implements Runnable {
         GMetricType type ;
         private String publishName ;
 
-        public MBeanAttribute(String attributeName, GMetricType type, 
+        public MBeanAttribute(String attributeName, String compositeKey, GMetricType type, 
                                 String units, String publishName ) {
-            String[] tokens = attributeName.split("\\.");
-            if (tokens.length == 1) {
-                this.attributeName = attributeName;
-            } else {
-                this.attributeName = tokens[0];
-                key = tokens[1];
-            }
-            this.canonicalName = attributeName;
+            this.canonicalName = attributeName + "." + key;
+            this.attributeName = attributeName;
             this.units = units ;
             this.type = type ;
             this.publishName = publishName ;
+            this.key = compositeKey ;
+        }
+        public MBeanAttribute(String attributeName, GMetricType type, 
+                String units, String publishName ) {
+			this(attributeName, null, type, units, publishName);
         }
 
         public void publish(ObjectName objectName) {
@@ -193,8 +204,9 @@ public class MBeanSampler implements Runnable {
             objectName = new ObjectName(name);
         }
 
-        public void addAttribute(String attributeName, GMetricType type, String units, String publishName ) {
-            attributes.add(new MBeanAttribute(attributeName, type, units, publishName));
+        public void addAttribute(String attributeName, String compositeName, 
+        		GMetricType type, String units, String publishName ) {
+            attributes.add(new MBeanAttribute(attributeName, compositeName, type, units, publishName));
         }
 
         public void publish() {

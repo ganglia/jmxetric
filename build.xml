@@ -17,7 +17,7 @@
 	<property name="thirdparty" location="${basedir}/lib"/>
 	<property name="dist"  location="${basedir}/dist/jmxetric"/>
 	<property name="api" location="${dist}/api"/>
-	<property name="version" value="0.2"/>
+	<property name="version" value="0.3"/>
 	<property name="findbugs.home"  location="/opt/findbugs-1.3.8" />
     <property name="javac.debug" value="off"/>
     <property name="javac.source" value="1.5"/>
@@ -88,6 +88,7 @@
 			<pathelement location="${build}"/>
 			<pathelement location="${build.tests}"/>
 			<pathelement path="${thirdparty}/oncrpc.jar"/>
+			<pathelement path="${thirdparty}/junit-4.1.jar"/>
 		  </classpath>
 
 		  <formatter type="plain"/>

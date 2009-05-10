@@ -176,10 +176,31 @@ public class XMLConfigurationService {
                     String type = attr.getAttributes().getNamedItem("type").getNodeValue();
                     String units = attr.getAttributes().getNamedItem("units").getNodeValue();
                     String pname = attr.getAttributes().getNamedItem("pname").getNodeValue();
-                    log.finer("Attr is " + attrName);
-                    String metricName = buildMetricName( processName, mbeanName, 
-                            mbeanPublishName, attrName, pname );
-                    mbSampler.addMBeanAttribute(mbeanName, attrName, GMetricType.valueOf(type.toUpperCase()), units, metricName);
+                    
+                    if ( "".equals(type)) {
+                    	//assume that there is a composite attribute to follow
+                        NodeList composites = (NodeList) xpath.evaluate("composite", attr,
+                                XPathConstants.NODESET);
+                        //for every composite
+                        for (int l = 0; l < composites.getLength(); l++) {
+                            Node composite = composites.item(l);
+                            String compositeName = composite.getAttributes().getNamedItem("name").getNodeValue();
+                            String compositeType = composite.getAttributes().getNamedItem("type").getNodeValue();
+                            String compositeUnits = composite.getAttributes().getNamedItem("units").getNodeValue();
+                            String compositePname = composite.getAttributes().getNamedItem("pname").getNodeValue();
+                            String metricName = buildMetricName( processName, mbeanName, 
+                                    mbeanPublishName, compositeName, compositePname );
+    	                    log.finer("Attr is " + compositeName);
+    	                    mbSampler.addMBeanAttribute(mbeanName, attrName, compositeName, 
+    	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits, metricName);
+                        }
+                    } else {
+                    	// It's a non composite attribute
+	                    log.finer("Attr is " + attrName);
+	                    String metricName = buildMetricName( processName, mbeanName, 
+	                            mbeanPublishName, attrName, pname );
+	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, GMetricType.valueOf(type.toUpperCase()), units, metricName);
+                    }
                 }
             }
             agent.addSampler(mbSampler);

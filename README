@@ -71,7 +71,9 @@ Configuration
        <!ELEMENT mbean (attribute)*>
           <!ATTLIST mbean name CDATA #REQUIRED>
           <!ATTLIST mbean pname CDATA #REQUIRED>
-       <!ELEMENT attribute EMPTY>
+       <!ELEMENT attribute (composite)* >
+          <!ATTLIST attribute name CDATA #REQUIRED>
+       <!ELEMENT composite EMPTY>
           <!ATTLIST attribute name CDATA #REQUIRED>
           <!ATTLIST attribute type CDATA #REQUIRED>
           <!ATTLIST attribute units CDATA "" >
@@ -88,14 +90,17 @@ Configuration
         <jvm process="ProcessName"/>
         <sample delay="300">
             <mbean name="java.lang:type=Memory" pname="Memory">
-                <attribute name="HeapMemoryUsage.init" pname="Heap_init" type="int32" units="bytes"/>
+                </attribute> name="HeapMemoryUsage.init" pname="Heap_init" type="int32" units="bytes"/>
                 <attribute name="HeapMemoryUsage.committed" pname="Heap_committed" type="int32" units="bytes"/>
                 <attribute name="HeapMemoryUsage.used" pname="Heap_used" type="int32" units="bytes" />
                 <attribute name="HeapMemoryUsage.max" pname="Heap_max" type="int32" units="bytes" />
-                <attribute name="NonHeapMemoryUsage.init" pname="NonHeap_init" type="int32"  units="bytes" />
-                <attribute name="NonHeapMemoryUsage.committed" pname="NonHeap_committed" type="int32" units="bytes" />
-                <attribute name="NonHeapMemoryUsage.used" pname="NonHeap_used" type="int32" units="bytes" />
-                <attribute name="NonHeapMemoryUsage.max" pname="NonHeap_max" type="int32" units="bytes" />
+
+                <attribute name="NonHeapMemoryUsage" >
+                    <composite name="max" pname="NonHeap_max" type="int32" units="bytes" />
+                    <composite name="init" pname="NonHeap_init" type="int32" units="bytes" />
+                    <composite name="comitted" pname="NonHeap_committed" type="int32" units="bytes" />
+                    <composite name="used" pname="NonHeap_used" type="int32" units="bytes" />
+                </attribute>
             </mbean>
             <mbean name="java.lang:type=Threading" pname="Threading" >
                 <attribute name="ThreadCount" type="int16" />

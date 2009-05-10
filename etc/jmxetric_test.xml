@@ -41,6 +41,19 @@
 				<composite name="max" pname="NonHeap_max" type="int32" units="bytes" />
 			</attribute>
 		</mbean>
+		<mbean name="jmxetric:type=TestExample" pname="TestExample">
+			<attribute name="Int" type="int32" />
+			<attribute name="Long" type="int32" />
+			<attribute name="Double" type="double" />
+			<attribute name="Float" type="float" />
+			<attribute name="String" type="string" />
+			<attribute name="Composite">
+				<composite name="date" pname="Composite_date" type="String" units="bytes"/>
+				<composite name="integer" pname="Composite_integer" type="int32" units="bytes"/>
+				<composite name="name" pname="Composite_name" type="int32" units="bytes" />
+			</attribute>
+		</mbean>
+		
 		<mbean name="java.lang:type=Threading" pname="Threading" >
 			<attribute name="ThreadCount" type="int16" />
 			<attribute name="DaemonThreadCount" type="int16" />
