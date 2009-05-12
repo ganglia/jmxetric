@@ -148,11 +148,12 @@ public class MBeanSampler implements Runnable {
                 Publisher gm = getPublisher();
                 log.finer("Announcing metric " + publishName + "=" + value +"("+ getUnits() +")" );
                 gm.publish(process, publishName, value, getType(), getUnits());
+            } catch ( javax.management.InstanceNotFoundException ex ) {
+                log.warning("Exception when getting " + objectName + " " + canonicalName);
             } catch (Exception ex) {
-                log.warning("Exception when getting " + canonicalName);
+                log.warning("Exception when getting " + objectName + " " + canonicalName);
                 ex.printStackTrace();
             }
-
         }
 
         public String getAttributeName() {

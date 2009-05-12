@@ -5,8 +5,7 @@
 	<artifactId>jmxetric</artifactId>
 	<name>JMXetric</name>
 	<version>0.0.3-SNAPSHOT</version>
-	<description>Java interface to Ganglia</description>
-
+	<description>JVM instrumentation to Ganglia</description>
 
 	<dependencies>
 		<dependency>
@@ -16,8 +15,6 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-
-
 		<dependency>
 			<groupId>net.sourceforge.remotetea</groupId>
 			<artifactId>oncrpc</artifactId>
@@ -25,10 +22,7 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/src/main/lib/oncrpc.jar</systemPath>
 		</dependency>
-
-
 	</dependencies>
-
 
 	<build>
 		<plugins>
@@ -51,9 +45,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
-
-
 	</build>
 
 	<reporting>

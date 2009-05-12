@@ -58,6 +58,11 @@
 			<attribute name="ThreadCount" type="int16" />
 			<attribute name="DaemonThreadCount" type="int16" />
 		</mbean>
+
+		<mbean name="java.lang:type=Threading"  >
+			<attribute name="ThreadCount" type="int16" />
+			<attribute name="DaemonThreadCount" type="int16" />
+		</mbean>
 	</sample>
 </jmxetric-config>
 

@@ -1,3 +1,13 @@
+Changes in version 0.3
+
+* Built using Maven
+* #2 Compiled to target JVM 1.5 for legacy support
+* #3 NPE if <mbean> element has no "pname" attribute specified 
+* #4 Attributes with embedded "."s improperly parsed 
+* #5 Uninitialised mbeans cause exception on startup 
+* #7 Incorrect javaagent option sample in README 
+
+* Suppress execption (keep warning) in the event the mbean is slow to initialise on startup
 
 Changes in version 0.2
 

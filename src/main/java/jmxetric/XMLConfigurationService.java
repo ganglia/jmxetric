@@ -170,7 +170,10 @@ public class XMLConfigurationService {
             for (int j = 0; j < mbeans.getLength(); j++) {
                 Node mbean = mbeans.item(j);
                 String mbeanName = mbean.getAttributes().getNamedItem("name").getNodeValue();
-                String mbeanPublishName = mbean.getAttributes().getNamedItem("pname").getNodeValue();
+                Node pnameNode =  mbean.getAttributes().getNamedItem("pname") ;
+                String mbeanPublishName = "NULL" ;
+                if ( pnameNode != null )
+                    mbeanPublishName = pnameNode.getNodeValue();
                 log.finer("Mbean is " + mbeanName);
                 NodeList attrs = (NodeList) xpath.evaluate("attribute", mbean,
                         XPathConstants.NODESET);
