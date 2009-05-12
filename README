@@ -23,7 +23,7 @@ Installation
 
     Unzip the archive
     Add the following to your JVM
-    java -javaagent:<path>/jmxetric.jar:host="",port="",config="",process="" usual.java.main.class
+    java -javaagent:<path>/jmxetric.jar=host="",port="",config="",process="" usual.java.main.class
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
