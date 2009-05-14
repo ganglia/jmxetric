@@ -3,6 +3,7 @@
    <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>
    <!ELEMENT sample (mbean)*>
       <!ATTLIST sample delay CDATA #REQUIRED>
+      <!ATTLIST sample initialdelay CDATA "0">
    <!ELEMENT mbean (attribute)*>
       <!ATTLIST mbean name CDATA #REQUIRED>
       <!ATTLIST mbean pname CDATA #REQUIRED>
