@@ -19,5 +19,6 @@ public interface TestExampleMXBean {
 	double getDouble() ;
 	float getFloat() ;
 	ExampleComposite getComposite();
+	int getCounter() ;
 }
 

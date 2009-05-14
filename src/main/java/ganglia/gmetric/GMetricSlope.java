@@ -12,8 +12,8 @@ package ganglia.gmetric;
 public enum GMetricSlope {
     //zero|positive|negative|both
     ZERO(0),
-    POSITIVE(0),
-    NEGATIVE(0),
+    POSITIVE(1),
+    NEGATIVE(2),
     BOTH(3);
     
     private int gangliaSlope ;

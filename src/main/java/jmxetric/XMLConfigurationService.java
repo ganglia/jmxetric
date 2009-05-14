@@ -1,6 +1,7 @@
 package jmxetric;
 
 import ganglia.gmetric.GMetric;
+import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
 import ganglia.gmetric.GMetric.UDPAddressingMode;
 
@@ -84,6 +85,28 @@ public class XMLConfigurationService {
         }
         return defaultValue ;
     }
+    
+    private static String selectParameterFromNode( Node ganglia, 
+    		String attributeName, String defaultValue ) {
+    	return selectParameterFromNode( (String)null, ganglia, attributeName, defaultValue);
+    }
+
+    private static String selectParameterFromNode( String cmdLine, 
+    		Node ganglia, String attributeName, 
+    		String defaultValue ) {
+    	String ret = defaultValue ;
+    	if ( cmdLine != null )
+    		ret = cmdLine ;
+    	else if ( ganglia != null ) {
+    		Node node = ganglia.getAttributes().getNamedItem(attributeName);
+    		if ( node != null ) {
+	    		String value = node.getNodeValue();
+	    		if ( value != null )
+	    			ret = value ;
+    		}
+    	}
+    	return ret ;
+    }
     /**
      * Creates a GMetric attribute on the JMXetricAgent from the XML config
      * @param agent the agent to configure
@@ -104,31 +127,27 @@ public class XMLConfigurationService {
         String gangliaExpr = "/jmxetric-config/ganglia";
         Node g = (Node) xpath.evaluate(gangliaExpr, inputSource,
                 XPathConstants.NODE);
-        String hostname = null ;
-        if ( cmdLineHost != null )
-            hostname = cmdLineHost ;
-        else 
-            hostname = g.getAttributes().getNamedItem("hostname").getNodeValue();
-        String port = null ;
-        if ( cmdLinePort != null ) 
-            port = cmdLinePort ;
-        else
-            port = g.getAttributes().getNamedItem("port").getNodeValue();
+        String hostname = selectParameterFromNode( cmdLineHost, 
+        		g, "hostname", "localhost");
+        String port = selectParameterFromNode( cmdLinePort, 
+        		g, "port", "8649");
         int iport = Integer.parseInt(port);
-        String mode = null ;
-        if ( cmdLineMode != null )
-        	mode = cmdLineMode ;
-        else 
-        	mode = g.getAttributes().getNamedItem("mode").getNodeValue();
+        String mode = selectParameterFromNode( cmdLineMode,
+        		g, "mode","multicast");
         UDPAddressingMode addressingMode = UDPAddressingMode.MULTICAST;
         if ( mode.toLowerCase().equals("unicast")) {
         	addressingMode = UDPAddressingMode.UNICAST;
         }
-        boolean v31x = false ;
-        if ( cmdLinev31x != null )
-        	v31x = Boolean.parseBoolean(cmdLinev31x) ;
-        else 
-        	v31x = Boolean.parseBoolean(g.getAttributes().getNamedItem("wireformat31x").getNodeValue());
+        String stringv31x = selectParameterFromNode( cmdLinev31x, 
+        		g, "wireformat31x", "false");
+        boolean v31x = Boolean.parseBoolean(stringv31x) ;
+        
+        StringBuilder buf = new StringBuilder() ;
+        buf.append("GMetric host=").append( hostname );
+        buf.append(" port=").append( port );
+        buf.append(" mode=").append( mode );
+        buf.append(" v31x=").append( v31x );
+        log.fine(buf.toString());
         GMetric gmetric = new GMetric(hostname, iport, addressingMode, v31x );
         agent.setGmetric(gmetric);
     }
@@ -161,29 +180,35 @@ public class XMLConfigurationService {
             Node sample = samples.item(i);
 
             log.finer("Sample is " + sample);
-            Node delay = sample.getAttributes().getNamedItem("delay");
-            int iDelay = Integer.parseInt(delay.getNodeValue());
-            MBeanSampler mbSampler = new MBeanSampler(iDelay, processName);
+            /*
+             *         String port = selectParameterFromNode( cmdLinePort, 
+        		g, "port", "8649");
+        int iport = Integer.parseInt(port);
+
+             */
+            String delayString = selectParameterFromNode( sample, "delay", "60");
+            int delay = Integer.parseInt(delayString);
+            String initialDelayString = selectParameterFromNode( sample, "initialdelay", "0");
+            int initialDelay = Integer.parseInt(initialDelayString);
+            MBeanSampler mbSampler = new MBeanSampler(initialDelay, delay, processName);
             NodeList mbeans = (NodeList) xpath.evaluate("mbean", sample,
                     XPathConstants.NODESET);
             // for every mbean
             for (int j = 0; j < mbeans.getLength(); j++) {
                 Node mbean = mbeans.item(j);
-                String mbeanName = mbean.getAttributes().getNamedItem("name").getNodeValue();
-                Node pnameNode =  mbean.getAttributes().getNamedItem("pname") ;
-                String mbeanPublishName = "NULL" ;
-                if ( pnameNode != null )
-                    mbeanPublishName = pnameNode.getNodeValue();
+                String mbeanName = selectParameterFromNode( mbean, "name", null );
+                String mbeanPublishName = selectParameterFromNode( mbean, "pname", "NULL" );
                 log.finer("Mbean is " + mbeanName);
                 NodeList attrs = (NodeList) xpath.evaluate("attribute", mbean,
                         XPathConstants.NODESET);
                 //for every attribute
                 for (int k = 0; k < attrs.getLength(); k++) {
                     Node attr = attrs.item(k);
-                    String attrName = attr.getAttributes().getNamedItem("name").getNodeValue();
-                    String type = attr.getAttributes().getNamedItem("type").getNodeValue();
-                    String units = attr.getAttributes().getNamedItem("units").getNodeValue();
-                    String pname = attr.getAttributes().getNamedItem("pname").getNodeValue();
+                    String attrName = selectParameterFromNode(attr, "name","NULL");
+                    String type = selectParameterFromNode(attr, "type", "");
+                    String units = selectParameterFromNode(attr, "units", "" );
+                    String pname = selectParameterFromNode(attr, "pname", "");
+                    String slope = selectParameterFromNode(attr, "slope", "" );
                     
                     if ( "".equals(type)) {
                     	//assume that there is a composite attribute to follow
@@ -192,22 +217,26 @@ public class XMLConfigurationService {
                         //for every composite
                         for (int l = 0; l < composites.getLength(); l++) {
                             Node composite = composites.item(l);
-                            String compositeName = composite.getAttributes().getNamedItem("name").getNodeValue();
-                            String compositeType = composite.getAttributes().getNamedItem("type").getNodeValue();
-                            String compositeUnits = composite.getAttributes().getNamedItem("units").getNodeValue();
-                            String compositePname = composite.getAttributes().getNamedItem("pname").getNodeValue();
+                            String compositeName = selectParameterFromNode(composite, "name", "NULL");
+                            String compositeType = selectParameterFromNode(composite, "type", "");
+                            String compositeUnits = selectParameterFromNode(composite, "units", "");
+                            String compositePname = selectParameterFromNode(composite, "pname", "");
+                            String compositeSlope = selectParameterFromNode(composite, "slope", "");
                             String metricName = buildMetricName( processName, mbeanName, 
                                     mbeanPublishName, compositeName, compositePname );
     	                    log.finer("Attr is " + compositeName);
     	                    mbSampler.addMBeanAttribute(mbeanName, attrName, compositeName, 
-    	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits, metricName);
+    	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits,
+    	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName);
                         }
                     } else {
                     	// It's a non composite attribute
 	                    log.finer("Attr is " + attrName);
 	                    String metricName = buildMetricName( processName, mbeanName, 
 	                            mbeanPublishName, attrName, pname );
-	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, GMetricType.valueOf(type.toUpperCase()), units, metricName);
+	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, 
+	                    		GMetricType.valueOf(type.toUpperCase()), units,
+	                    		GMetricSlope.valueOf(slope.toUpperCase()), metricName);
                     }
                 }
             }

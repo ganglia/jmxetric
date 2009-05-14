@@ -1,6 +1,7 @@
 package jmxetric;
 
 import static org.junit.Assert.*;
+import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
 import ganglia.gmetric.GangliaException;
 
@@ -26,7 +27,7 @@ public class MBeanSamplerTest {
 		Map<String, String> results = new HashMap<String,String>();
 
 		public void publish(String processName, String attributeName,
-				String value, GMetricType type, String units)
+				String value, GMetricType type, GMetricSlope slope, String units)
 				throws GangliaException {
 			results.put(attributeName, value);
 		}
@@ -54,10 +55,11 @@ public class MBeanSamplerTest {
      */
     @Test
     public void sampleLong() throws Exception {
-        MBeanSampler sampler = new MBeanSampler(30000, "TEST") ;
+        MBeanSampler sampler = new MBeanSampler(0, 30000, "TEST") ;
         MyPublisher publisher = new MyPublisher() ;
         sampler.setPublisher(publisher);
-        sampler.addMBeanAttribute(BEAN_NAME, "Long", GMetricType.INT32, "bytes", "Longer");
+        sampler.addMBeanAttribute(BEAN_NAME, "Long", GMetricType.INT32, 
+        		"bytes", GMetricSlope.BOTH, "Longer");
         sampler.run() ;
         String value = publisher.getResult("Longer");
         assertEquals( Example.LONG_VALUE, Long.valueOf(value ));
@@ -67,13 +69,28 @@ public class MBeanSamplerTest {
      */
     @Test
     public void sampleComposite() throws Exception {
-        MBeanSampler sampler = new MBeanSampler(30000, "TEST") ;
+        MBeanSampler sampler = new MBeanSampler(0, 30000, "TEST") ;
         MyPublisher publisher = new MyPublisher() ;
         sampler.setPublisher(publisher);
-        sampler.addMBeanAttribute(BEAN_NAME, "Composite","name", GMetricType.STRING, "bytes", "name");
+        sampler.addMBeanAttribute(BEAN_NAME, "Composite","name", 
+        		GMetricType.STRING, "bytes", GMetricSlope.BOTH, "name");
         sampler.run() ;
         String value = publisher.getResult("name");
         assertEquals( ExampleComposite.STRING_VALUE, value );
+    }
+    /**
+     * Test of attribute sample, type int, slope positive
+     */
+    @Test
+    public void sampleCounter() throws Exception {
+        MBeanSampler sampler = new MBeanSampler(0, 1, "TEST") ;
+        MyPublisher publisher = new MyPublisher() ;
+        sampler.setPublisher(publisher);
+        sampler.addMBeanAttribute(BEAN_NAME, "Counter", GMetricType.INT32,
+        		"units", GMetricSlope.POSITIVE, "counter");
+        sampler.run() ;
+        String value = publisher.getResult("counter");
+        assertTrue( Integer.valueOf(value) >= 0);
     }
     
 }

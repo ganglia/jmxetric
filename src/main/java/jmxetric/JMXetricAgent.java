@@ -49,7 +49,7 @@ public class JMXetricAgent {
         executor.setThreadFactory(daemonThreadGroup);
 
         for (MBeanSampler s : samplers) {
-            executor.scheduleAtFixedRate(s, 0, s.getDelay(), TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(s, s.getInitialDelay(), s.getDelay(), TimeUnit.SECONDS);
         }
     }
     /**

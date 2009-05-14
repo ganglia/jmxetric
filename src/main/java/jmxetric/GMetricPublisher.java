@@ -13,9 +13,9 @@ public class GMetricPublisher implements Publisher {
 	}
 
 	public void publish(String processName, String attributeName, String value,
-			GMetricType type, String units) throws GangliaException {
+			GMetricType type, GMetricSlope slope, String units) throws GangliaException {
         gm.announce(attributeName, value, type, units, 
-        		GMetricSlope.BOTH, 60, 0, processName);
+        		slope, 60, 0, processName);
 	}
 
 }

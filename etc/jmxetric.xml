@@ -11,11 +11,13 @@
       <!ATTLIST attribute type CDATA "" >
       <!ATTLIST attribute units CDATA "" >
       <!ATTLIST attribute pname CDATA "" >
+      <!ATTLIST attribute slope CDATA "both" >
    <!ELEMENT composite EMPTY>
       <!ATTLIST composite name CDATA #REQUIRED>
       <!ATTLIST composite type CDATA "" >
       <!ATTLIST composite units CDATA "" >
       <!ATTLIST composite pname CDATA "" >
+      <!ATTLIST composite slope CDATA "both" >
    <!ELEMENT ganglia EMPTY>
       <!ATTLIST ganglia hostname CDATA #REQUIRED>
       <!ATTLIST ganglia port CDATA #REQUIRED>
@@ -44,6 +46,9 @@
 		<mbean name="java.lang:type=Threading" pname="Threading" >
 			<attribute name="ThreadCount" type="int16" />
 			<attribute name="DaemonThreadCount" type="int16" />
+		</mbean>
+		<mbean name="java.lang:type=OperatingSystem" pname="OS" >
+			<attribute name="ProcessCpuTime" type="int32" slope="positive"/>
 		</mbean>
 	</sample>
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />

@@ -1,5 +1,6 @@
 package jmxetric;
 
+import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
 
 import java.lang.management.ManagementFactory;
@@ -26,6 +27,7 @@ public class MBeanSampler implements Runnable {
      */
     private Map<String, MBeanHolder> mbeanMap = new HashMap<String, MBeanHolder>();
     private int delay;
+    private int initialDelay;
     private MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
     private Publisher publisher = null;
     private String process = null ;
@@ -35,7 +37,8 @@ public class MBeanSampler implements Runnable {
      * @param delay the sample interval in seconds
      * @param process the process name that is appended to metrics
      */
-    public MBeanSampler(int delay, String process ) {
+    public MBeanSampler(int initialDelay, int delay, String process ) {
+    	this.initialDelay = initialDelay ;
         this.delay = delay;
         this.process = process; 
     }
@@ -47,6 +50,13 @@ public class MBeanSampler implements Runnable {
     public int getDelay() {
         return delay;
     }
+    /**
+     * Returns the initial delay before sampling begins
+     * @return the delay in seconds
+     */
+    public int getInitialDelay() {
+        return initialDelay;
+    }
 
     /**
      * Adds a mbean name/attribute pair to be sampled
@@ -57,14 +67,15 @@ public class MBeanSampler implements Runnable {
      * @throws java.lang.Exception
      */
     public void addMBeanAttribute(String mbean, String attribute, String composite, 
-                GMetricType type, String units, String publishName ) throws Exception {
+                GMetricType type, String units, GMetricSlope slope,
+                String publishName ) throws Exception {
         MBeanHolder mbeanHolder = mbeanMap.get(mbean);
         if (mbeanHolder == null) {
             mbeanHolder = new MBeanHolder(mbean);
             mbeanMap.put(mbean, mbeanHolder);
         }
 
-        mbeanHolder.addAttribute(attribute, composite, type, units, publishName);
+        mbeanHolder.addAttribute(attribute, composite, type, slope, units, publishName);
     }
     /**
      * Adds a mbean name/attribute pair to be sampled
@@ -74,8 +85,9 @@ public class MBeanSampler implements Runnable {
      * @throws java.lang.Exception
      */
     public void addMBeanAttribute(String mbean, String attribute, 
-                GMetricType type, String units, String publishName ) throws Exception {
-        addMBeanAttribute( mbean, attribute, null, type, units,publishName );
+                GMetricType type, String units, GMetricSlope slope,
+                String publishName ) throws Exception {
+        addMBeanAttribute( mbean, attribute, null, type, units, slope, publishName );
     }
 
     /**
@@ -111,21 +123,23 @@ public class MBeanSampler implements Runnable {
         private String key;
         private String canonicalName;
         private String units ;
-        GMetricType type ;
+        private GMetricType type ;
+        private GMetricSlope slope ;
         private String publishName ;
 
         public MBeanAttribute(String attributeName, String compositeKey, GMetricType type, 
-                                String units, String publishName ) {
+                                String units, GMetricSlope slope, String publishName ) {
             this.key = compositeKey ;
             this.canonicalName = attributeName + "." + compositeKey ;
             this.attributeName = attributeName;
             this.units = units ;
             this.type = type ;
+            this.slope = slope ;
             this.publishName = publishName ;
         }
-        public MBeanAttribute(String attributeName, GMetricType type, 
+        public MBeanAttribute(String attributeName, GMetricType type, GMetricSlope slope,  
                 String units, String publishName ) {
-			this(attributeName, null, type, units, publishName);
+			this(attributeName, null, type, units, slope, publishName);
         }
 
         public void publish(ObjectName objectName) {
@@ -146,8 +160,8 @@ public class MBeanSampler implements Runnable {
                             " attribute " + canonicalName + ":" + o);
                 }
                 Publisher gm = getPublisher();
-                log.finer("Announcing metric " + publishName + "=" + value +"("+ getUnits() +")" );
-                gm.publish(process, publishName, value, getType(), getUnits());
+                log.finer("Announcing metric " + this.toString() + " value=" + value );
+                gm.publish(process, publishName, value, getType(), getSlope(), getUnits());
             } catch ( javax.management.InstanceNotFoundException ex ) {
                 log.warning("Exception when getting " + objectName + " " + canonicalName);
             } catch (Exception ex) {
@@ -171,6 +185,10 @@ public class MBeanSampler implements Runnable {
         public GMetricType getType() {
             return type;
         }
+        
+        public GMetricSlope getSlope() {
+            return slope;
+        }
 
         public String getKey() {
             return key;
@@ -178,7 +196,14 @@ public class MBeanSampler implements Runnable {
 
         @Override
         public String toString() {
-            return canonicalName;
+        	StringBuilder buf = new StringBuilder() ;
+        	buf.append("attributeName=").append(attributeName);
+        	buf.append(" canonicalName=").append(canonicalName);
+        	buf.append(" units=").append(units);
+        	buf.append(" type=").append(type);
+        	buf.append(" slope=").append(slope);
+        	buf.append(" publishName=").append(publishName);
+            return buf.toString();
         }
 
         @Override
@@ -210,8 +235,9 @@ public class MBeanSampler implements Runnable {
         }
 
         public void addAttribute(String attributeName, String compositeName, 
-        		GMetricType type, String units, String publishName ) {
-            attributes.add(new MBeanAttribute(attributeName, compositeName, type, units, publishName));
+        		GMetricType type, GMetricSlope slope, String units, String publishName ) {
+            attributes.add(new MBeanAttribute(attributeName, compositeName,
+            		type, units, slope, publishName));
         }
 
         public void publish() {
