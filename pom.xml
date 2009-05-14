@@ -20,7 +20,7 @@
 			<artifactId>oncrpc</artifactId>
 			<version>1.0.7</version>
 			<scope>system</scope>
-			<systemPath>${basedir}/src/main/lib/oncrpc.jar</systemPath>
+			<systemPath>${basedir}/src/main/lib/oncrpc-1.0.7.jar</systemPath>
 		</dependency>
 	</dependencies>
 
@@ -44,6 +44,14 @@
 					</archive>
 				</configuration>
 			</plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/bin.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
