@@ -2,7 +2,7 @@ Name
     jmxetric - jvm instrumentation to ganglia
 
 Version
-    jmxetric @JMXETRIC_VERSION@
+    jmxetric 0.0.3
 
     The latest version of this software and document will always be found at 
     http://code.google.com/p/jmxetric/
@@ -24,6 +24,16 @@ Installation
     Unzip the archive
     Add the following to your JVM
     java -javaagent:<path>/jmxetric.jar=host="",port="",config="",process="" usual.java.main.class
+
+Demo / Quickstart
+
+    1) Ensure you have a gmond running on localhost:8649
+    2) Unzip archive
+    3) cd into the directory
+    2) In bash do:
+        $ export config="host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric.xml"
+        $ java  -Djava.util.logging.config.file=etc/logging.properties \
+            -javaagent:path_to/jmxetric-0.0.3-SNAPSHOT.jar=$config jmxetric.JMXetricAgent
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
