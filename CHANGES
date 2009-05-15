@@ -9,7 +9,7 @@ Please note that the config file format has changed to support mbeans with a dot
 * #5 Uninitialised mbeans cause exception on startup 
 * #7 Incorrect javaagent option sample in README 
 * #7 Slope is not defined in the config file so cannot use ganglia/rrd counter attributes 
-* Suppress exception (keep warning) in the event the mbean is slow to initialise on startup
+* Suppress exception (keep warning) in the event the mbean is slow to initialise on startup, also add initial delay parameter to config file
 
 Changes in version 0.2
 
