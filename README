@@ -33,7 +33,7 @@ Demo / Quickstart
     2) In bash do:
         $ export config="host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric.xml"
         $ java  -Djava.util.logging.config.file=etc/logging.properties \
-            -javaagent:path_to/jmxetric-0.0.3-SNAPSHOT.jar=$config jmxetric.JMXetricAgent
+            -javaagent:jmxetric-0.0.3.jar=$config jmxetric.JMXetricAgent
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
