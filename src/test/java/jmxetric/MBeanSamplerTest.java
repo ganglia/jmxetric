@@ -72,11 +72,44 @@ public class MBeanSamplerTest {
         MBeanSampler sampler = new MBeanSampler(0, 30000, "TEST") ;
         MyPublisher publisher = new MyPublisher() ;
         sampler.setPublisher(publisher);
-        sampler.addMBeanAttribute(BEAN_NAME, "Composite","name", 
-        		GMetricType.STRING, "bytes", GMetricSlope.BOTH, "name");
-        sampler.run() ;
-        String value = publisher.getResult("name");
-        assertEquals( ExampleComposite.STRING_VALUE, value );
+        
+        String compNamePublishName = "compName";
+        sampler.addMBeanAttribute(BEAN_NAME, 
+        						"Composite",
+        						"name", 
+        						GMetricType.STRING, 
+        						"bytes", 
+        						GMetricSlope.BOTH, 
+        						compNamePublishName);
+        
+        String compIntPublishName = "compInt";
+        sampler.addMBeanAttribute(BEAN_NAME, 
+        							"Composite",
+        							"integer", 
+        							GMetricType.STRING, 
+        							"bytes", 
+        							GMetricSlope.BOTH, 
+        							compIntPublishName);
+        
+        String compDatePublishName = "compDate";
+        sampler.addMBeanAttribute(BEAN_NAME, 
+									"Composite",
+									"date", 
+									GMetricType.STRING, 
+									"bytes", 
+									GMetricSlope.BOTH, 
+									compDatePublishName);
+        
+        sampler.run();
+        
+        assertEquals( ExampleComposite.STRING_VALUE, 
+        				publisher.getResult(compNamePublishName) );
+        
+        assertEquals( "" + ExampleComposite.INT_VALUE, 
+        				publisher.getResult(compIntPublishName) );
+        
+        assertEquals( "" + ExampleComposite.DATE_VALUE, 
+        				publisher.getResult(compDatePublishName) );
     }
     /**
      * Test of attribute sample, type int, slope positive

@@ -212,13 +212,15 @@ public class MBeanSampler implements Runnable {
             if (obj == this) return true;
             if (this.getClass() != obj.getClass()) return false;
             MBeanAttribute attribute = (MBeanAttribute)obj ;
-            return attributeName.equals(attribute.getAttributeName());
+            return canonicalName.equals(attribute.getCanonicalName());
+//            return attributeName.equals(attribute.getAttributeName());
         }
 
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 79 * hash + (this.attributeName != null ? this.attributeName.hashCode() : 0);
+            hash = 79 * hash + (this.canonicalName != null ? this.canonicalName.hashCode() : 0);
+//            hash = 79 * hash + (this.attributeName != null ? this.attributeName.hashCode() : 0);
             return hash;
         }
     }
