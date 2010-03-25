@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.management.MBeanServer;
@@ -155,18 +156,29 @@ public class MBeanSampler implements Runnable {
                         value = val.toString();
                     }
                 } else {
-                    value = o.toString();
-                    log.fine("Sampling " + objectName +
-                            " attribute " + canonicalName + ":" + o);
+                	if (null != o){
+                		value = o.toString();
+                		log.fine("Sampling " + objectName +
+                				" attribute " + canonicalName + ":" + o);
+                	}else{
+                		log.fine("Not sampling " + objectName + 
+                				" attribute " + canonicalName + 
+                				" as value is null");
+                	}
                 }
-                Publisher gm = getPublisher();
-                log.finer("Announcing metric " + this.toString() + " value=" + value );
-                gm.publish(process, publishName, value, getType(), getSlope(), getUnits());
+                
+                if (null != value){
+                	Publisher gm = getPublisher();
+                	log.finer("Announcing metric " + this.toString() + " value=" + value );
+                	gm.publish(process, publishName, value, getType(), getSlope(), getUnits());
+                }
+                
             } catch ( javax.management.InstanceNotFoundException ex ) {
                 log.warning("Exception when getting " + objectName + " " + canonicalName);
             } catch (Exception ex) {
-                log.warning("Exception when getting " + objectName + " " + canonicalName);
-                ex.printStackTrace();
+                log.log(Level.WARNING,
+                		"Exception when getting " + objectName + " " + canonicalName,
+                		ex);
             }
         }
 
