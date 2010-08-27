@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Premain-Class: jmxetric.JMXetricAgent
+Boot-Class-Path: oncrpc-1.0.7.jar
+Can-Redefine-Classes: false
