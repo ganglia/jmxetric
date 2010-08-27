@@ -1,4 +1,9 @@
-Changes in version 0.3
+Changes in version 0.0.4
+
+#10 Attributes with composite values are not published correctly
+#11 If an attribute value is null, an exception is thrown as MBeanSampler attempts to publish it. 
+
+Changes in version 0.0.3
 
 Please note that the config file format has changed to support mbeans with a dot in the name. See the README or example file.
 
@@ -8,10 +13,10 @@ Please note that the config file format has changed to support mbeans with a dot
 * #4 Attributes with embedded "."s improperly parsed 
 * #5 Uninitialised mbeans cause exception on startup 
 * #7 Incorrect javaagent option sample in README 
-* #7 Slope is not defined in the config file so cannot use ganglia/rrd counter attributes 
+* #6 Slope is not defined in the config file so cannot use ganglia/rrd counter attributes 
 * Suppress exception (keep warning) in the event the mbean is slow to initialise on startup, also add initial delay parameter to config file
 
-Changes in version 0.2
+Changes in version 0.0.2
 
 * Added support for the ganglia 3.1.* wire format. 
 * Added support for UDP unicast. 

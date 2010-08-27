@@ -4,7 +4,7 @@
 	<groupId>com.specialprojectslab</groupId>
 	<artifactId>jmxetric</artifactId>
 	<name>JMXetric</name>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<description>JVM instrumentation to Ganglia</description>
 
 	<dependencies>
