@@ -1,3 +1,6 @@
+Changes in version 0.0.5
+#23 Publishing JMXetric jar file to a public Maven repo
+
 Changes in version 0.0.4
 
 #10 Attributes with composite values are not published correctly

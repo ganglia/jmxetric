@@ -2,7 +2,7 @@ Name
     jmxetric - jvm instrumentation to ganglia
 
 Version
-    jmxetric 0.0.4
+    jmxetric 0.0.5
 
     The latest version of this software and document will always be found at 
     http://code.google.com/p/jmxetric/
@@ -33,7 +33,7 @@ Demo / Quickstart
     2) In bash do:
         $ export config="host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric.xml"
         $ java  -Djava.util.logging.config.file=etc/logging.properties \
-            -javaagent:jmxetric-0.0.4.jar=$config jmxetric.JMXetricAgent
+            -javaagent:jmxetric-0.0.5.jar=$config jmxetric.JMXetricAgent
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
@@ -137,7 +137,7 @@ Support/Queries
     If you are using this at all, then I'd love to know!
 
 Copyright
-      Copyright (C) 2008-2010 Jasper Humphrey
+      Copyright (C) 2008-2011 Jasper Humphrey
 
 Authors
      Jasper Humphrey      jasper521 at gmail     Developer    
