@@ -9,7 +9,7 @@ import org.junit.Test;
 /**
  *
  */
-public class GMetricTest {
+public class GMetricIT {
 
     private GMetric instance = null;
 

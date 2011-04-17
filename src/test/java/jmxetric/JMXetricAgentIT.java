@@ -14,7 +14,7 @@ import org.junit.Test;
 /**
  *
  */
-public class JMXetricAgentTest {
+public class JMXetricAgentIT {
 
 	@Before
 	public void setUp() throws Exception {
