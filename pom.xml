@@ -36,11 +36,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.remotetea</groupId>
+      <groupId>org.acplt</groupId>
       <artifactId>oncrpc</artifactId>
       <version>1.0.7</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/src/main/lib/oncrpc-1.0.7.jar</systemPath>
     </dependency>
   </dependencies>
   <parent>

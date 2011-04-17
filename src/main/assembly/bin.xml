@@ -7,7 +7,6 @@
     <dependencySets>
         <dependencySet>
             <unpack>false</unpack>
-            <scope>system</scope>
         </dependencySet>
     </dependencySets>
     <fileSets>
