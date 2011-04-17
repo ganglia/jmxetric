@@ -5,7 +5,7 @@
   <artifactId>jmxetric</artifactId>
   <name>JMXetric</name>
   <packaging>jar</packaging>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.0.5</version>
   <description>JVM instrumentation to Ganglia</description>
   <url>http://code.google.com/p/jmxetric</url>
   <licenses>
@@ -16,9 +16,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:http://jmxetric.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://jmxetric.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://jmxetric.googlecode.com/svn/trunk</url>
+    <connection>scm:svn:http://jmxetric.googlecode.com/svn/tags/jmxetric-0.0.5</connection>
+    <developerConnection>scm:svn:https://jmxetric.googlecode.com/svn/tags/jmxetric-0.0.5</developerConnection>
+    <url>http://jmxetric.googlecode.com/svn/tags/jmxetric-0.0.5</url>
   </scm>
   <developers>
     <developer>
