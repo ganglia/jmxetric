@@ -1,5 +1,6 @@
 package jmxetric;
 
+import ganglia.GSampler;
 import ganglia.Publisher;
 import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
@@ -20,7 +21,7 @@ import javax.management.openmbean.CompositeData;
  * A class that samples MBeans and publishes attributes to Ganglia.  This 
  * classes' run method will be called periodically to sample the mbeans.
  */
-public class MBeanSampler implements Runnable {
+public class MBeanSampler extends GSampler {
 
     private static Logger log =
             Logger.getLogger(JMXetricAgent.class.getName());
@@ -28,11 +29,7 @@ public class MBeanSampler implements Runnable {
      * The internal data structure is a hashmap of key=mbean name
      */
     private Map<String, MBeanHolder> mbeanMap = new HashMap<String, MBeanHolder>();
-    private int delay;
-    private int initialDelay;
     private MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-    private Publisher publisher = null;
-    private String process = null ;
 
     /**
      * Creates an MBeanSampler
@@ -40,24 +37,7 @@ public class MBeanSampler implements Runnable {
      * @param process the process name that is appended to metrics
      */
     public MBeanSampler(int initialDelay, int delay, String process ) {
-    	this.initialDelay = initialDelay ;
-        this.delay = delay;
-        this.process = process; 
-    }
-
-    /**
-     * Returns the sample interval
-     * @return the sample interval in seconds
-     */
-    public int getDelay() {
-        return delay;
-    }
-    /**
-     * Returns the initial delay before sampling begins
-     * @return the delay in seconds
-     */
-    public int getInitialDelay() {
-        return initialDelay;
+    	super(initialDelay, delay, process);
     }
 
     /**
@@ -106,14 +86,6 @@ public class MBeanSampler implements Runnable {
             log.warning("Exception thrown sampling Mbeans");
             log.throwing( this.getClass().getName(), "Exception thrown sampling Mbeans:", ex) ;
         }
-    }
-
-    public Publisher getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
     }
 
     /**
