@@ -1,6 +1,8 @@
 package jmxetric;
 
 import ganglia.gmetric.GMetric;
+import ganglia.gmetric.GMetricPublisher;
+
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;

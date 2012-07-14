@@ -1,6 +1,7 @@
 package jmxetric;
 
 import static org.junit.Assert.*;
+import ganglia.Publisher;
 import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
 import ganglia.gmetric.GangliaException;

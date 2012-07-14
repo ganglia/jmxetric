@@ -1,5 +1,6 @@
 package jmxetric;
 
+import ganglia.Publisher;
 import ganglia.gmetric.GMetricSlope;
 import ganglia.gmetric.GMetricType;
 
