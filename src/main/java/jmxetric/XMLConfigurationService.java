@@ -64,6 +64,9 @@ public class XMLConfigurationService {
     }
 
     private final static Pattern argPattern = Pattern.compile( "(\\S+?)\\=(\\S*)" );
+
+    // Default multicast TTL = 5 (same site)
+	private static final int DEFAULT_TTL = 5;
     
     /**
      * Parses the string array, input, looking for a pattern tag=value
@@ -148,7 +151,7 @@ public class XMLConfigurationService {
         buf.append(" mode=").append( mode );
         buf.append(" v31x=").append( v31x );
         log.fine(buf.toString());
-        GMetric gmetric = new GMetric(hostname, iport, addressingMode, v31x );
+        GMetric gmetric = new GMetric(hostname, iport, addressingMode, DEFAULT_TTL, v31x );
         agent.setGmetric(gmetric);
     }
     /**
