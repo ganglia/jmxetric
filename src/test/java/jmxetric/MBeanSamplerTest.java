@@ -1,10 +1,11 @@
 package jmxetric;
 
 import static org.junit.Assert.*;
-import ganglia.Publisher;
-import ganglia.gmetric.GMetricSlope;
-import ganglia.gmetric.GMetricType;
-import ganglia.gmetric.GangliaException;
+
+import info.ganglia.Publisher;
+import info.ganglia.gmetric.GMetricSlope;
+import info.ganglia.gmetric.GMetricType;
+import info.ganglia.gmetric.GangliaException;
 
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;

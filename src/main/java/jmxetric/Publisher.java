@@ -1,8 +1,8 @@
 package jmxetric;
 
-import ganglia.gmetric.GMetricSlope;
-import ganglia.gmetric.GMetricType;
-import ganglia.gmetric.GangliaException;
+import info.ganglia.gmetric.GMetricSlope;
+import info.ganglia.gmetric.GMetricType;
+import info.ganglia.gmetric.GangliaException;
 
 public interface Publisher {
 	void publish( String processName, String attributeName, 

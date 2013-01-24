@@ -1,6 +1,7 @@
 package jmxetric;
 
-import ganglia.GMonitor;
+
+import info.ganglia.GMonitor;
 
 import java.lang.instrument.Instrumentation;
 import java.util.logging.Logger;

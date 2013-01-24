@@ -1,9 +1,10 @@
 package jmxetric;
 
-import ganglia.gmetric.GMetric;
-import ganglia.gmetric.GMetricSlope;
-import ganglia.gmetric.GMetricType;
-import ganglia.gmetric.GMetric.UDPAddressingMode;
+
+import info.ganglia.gmetric.GMetric;
+import info.ganglia.gmetric.GMetricSlope;
+import info.ganglia.gmetric.GMetricType;
+import info.ganglia.gmetric.GMetric.UDPAddressingMode;
 
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
