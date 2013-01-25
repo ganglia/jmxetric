@@ -56,5 +56,5 @@ public class JMXetricAgent extends GMonitor {
         }
     }
     
-    private static final String STARTUP_NOTICE="JMXetricAgent instrumented JVM, see http://code.google.com/p/jmxetric";
+    private static final String STARTUP_NOTICE="JMXetricAgent instrumented JVM, see https://github.com/ganglia/jmxetric";
 }
