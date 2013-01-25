@@ -1,3 +1,8 @@
+Changes in version 1.0.0
+* Tweak dependencies to include gmetric4j (not yet in maven central)
+* Update docs to refer to new home on github
+* rename package from jmxetric -> info.ganglia.jmxetric
+
 Changes in version 0.0.5
 #23 Publishing JMXetric jar file to a public Maven repo
 
