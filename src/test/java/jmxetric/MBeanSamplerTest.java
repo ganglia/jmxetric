@@ -6,6 +6,7 @@ import info.ganglia.gmetric4j.Publisher;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 import info.ganglia.gmetric4j.gmetric.GangliaException;
+import info.ganglia.jmxetric.MBeanSampler;
 
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;

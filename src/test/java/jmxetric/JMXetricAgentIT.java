@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import ganglia.gmetric.GMetricResult;
 
+import info.ganglia.jmxetric.JMXetricAgent;
+import info.ganglia.jmxetric.XMLConfigurationService;
+
 import java.lang.management.ManagementFactory;
 
 import javax.management.MBeanServer;

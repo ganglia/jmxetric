@@ -1,4 +1,4 @@
-package jmxetric;
+package info.ganglia.jmxetric;
 
 
 import info.ganglia.gmetric4j.GMonitor;
