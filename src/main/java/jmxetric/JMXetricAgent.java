@@ -1,7 +1,7 @@
 package jmxetric;
 
 
-import info.ganglia.GMonitor;
+import info.ganglia.gmetric4j.GMonitor;
 
 import java.lang.instrument.Instrumentation;
 import java.util.logging.Logger;

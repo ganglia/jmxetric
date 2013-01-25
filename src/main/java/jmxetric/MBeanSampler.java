@@ -1,10 +1,10 @@
 package jmxetric;
 
 
-import info.ganglia.GSampler;
-import info.ganglia.Publisher;
-import info.ganglia.gmetric.GMetricSlope;
-import info.ganglia.gmetric.GMetricType;
+import info.ganglia.gmetric4j.GSampler;
+import info.ganglia.gmetric4j.Publisher;
+import info.ganglia.gmetric4j.gmetric.GMetricSlope;
+import info.ganglia.gmetric4j.gmetric.GMetricType;
 
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
