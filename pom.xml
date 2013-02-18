@@ -5,7 +5,7 @@
   <artifactId>jmxetric</artifactId>
   <name>JMXetric</name>
   <packaging>jar</packaging>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>JVM instrumentation to Ganglia</description>
   <url>http://github.com/ganglia/jmxetric</url>
   <licenses>
@@ -31,13 +31,13 @@
     <dependency>
       <groupId>info.ganglia.gmetric4j</groupId>
       <artifactId>gmetric4j</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>info.ganglia.gmetric4j</groupId>
       <artifactId>gmetric4j</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

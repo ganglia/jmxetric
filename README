@@ -2,7 +2,7 @@ Name
     jmxetric - jvm instrumentation to ganglia
 
 Version
-    jmxetric 0.0.5
+    jmxetric 1.0.2
 
     The latest version of this software and document will always be found at 
     https://github.com/ganglia/jmxetric
