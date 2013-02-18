@@ -2,8 +2,8 @@ package jmxetric;
 
 import static org.junit.Assert.*;
 
-import ganglia.gmetric.GMetricResult;
 
+import info.ganglia.gmetric4j.gmetric.GMetricResult;
 import info.ganglia.jmxetric.JMXetricAgent;
 import info.ganglia.jmxetric.XMLConfigurationService;
 
