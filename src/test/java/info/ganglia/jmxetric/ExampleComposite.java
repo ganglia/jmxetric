@@ -1,4 +1,4 @@
-package jmxetric;
+package info.ganglia.jmxetric;
 
 import java.beans.ConstructorProperties;
 import java.util.Date;

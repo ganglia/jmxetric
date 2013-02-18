@@ -1,4 +1,4 @@
-package jmxetric;
+package info.ganglia.jmxetric;
 
 import static org.junit.Assert.*;
 

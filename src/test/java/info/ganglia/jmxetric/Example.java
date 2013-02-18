@@ -1,4 +1,4 @@
-package jmxetric;
+package info.ganglia.jmxetric;
 
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.Executors;

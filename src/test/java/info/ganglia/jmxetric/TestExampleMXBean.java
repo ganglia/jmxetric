@@ -1,4 +1,4 @@
-package jmxetric;
+package info.ganglia.jmxetric;
 
 /**
  * MXBean definition used for testing
