@@ -26,6 +26,11 @@
       <name>Jasper Humphrey</name>
       <email>jasper521@googlemail.com</email>
     </developer>
+    <developer>
+      <id>pocock</id>
+      <name>Daniel Pocock</name>
+      <email>daniel@pocock.com.au</email>
+    </developer>
   </developers>
   <dependencies>
     <dependency>
