@@ -28,12 +28,13 @@ Installation
 Demo / Quickstart
 
     1) Ensure you have a gmond running on localhost:8649
-    2) Unzip archive
+    2) Download jmxetric-1.0.2.jar, gmetric4j-1.0.2.jar and oncrpc-1.0.7.jar
+       all into the same directory.
     3) cd into the directory
     2) In bash do:
         $ export config="host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric.xml"
         $ java  -Djava.util.logging.config.file=etc/logging.properties \
-            -javaagent:jmxetric-0.0.5.jar=$config jmxetric.JMXetricAgent
+            -javaagent:jmxetric-1.0.2.jar=$config jmxetric.JMXetricAgent
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
@@ -138,7 +139,7 @@ Support/Queries
 
 Copyright
       Copyright (C) 2008-2011 Jasper Humphrey
+      Copyright (C) 2011-2013 Daniel Pocock http://danielpocock.com
 
 Authors
      Jasper Humphrey      jasper521 at gmail     Developer    
-
