@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Premain-Class: info.ganglia.jmxetric.JMXetricAgent
-Boot-Class-Path: oncrpc-1.0.7.jar gmetric4j-1.0.0.jar
+Boot-Class-Path: oncrpc-1.0.7.jar gmetric4j-1.0.2.jar
 Can-Redefine-Classes: false
