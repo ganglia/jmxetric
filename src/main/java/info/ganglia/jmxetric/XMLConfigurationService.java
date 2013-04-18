@@ -41,6 +41,7 @@ public class XMLConfigurationService {
         String config = DEFAULT_CONFIG ;
         String wireformat = null ;
         String processName = null ;
+        String spoof = null;
         
         if ( agentArgs != null ) {
             String[] args = agentArgs.split(",");
@@ -50,6 +51,7 @@ public class XMLConfigurationService {
             mode = getTagValue( "mode", args, DEFAULT_MODE );
             wireformat = getTagValue( "wireformat31x", args, "false");
             processName = getTagValue( "process", args, null );
+            spoof = getTagValue( "spoof", args, null );
         }
 
         log.config("Command line argument found: host=" + host );
@@ -57,10 +59,13 @@ public class XMLConfigurationService {
         log.config("Command line args: config=" + config );
         log.config("Command line args: mode=" + mode );
         log.config("Command line args: wireformat31x=" + wireformat );
+        log.config("Command line args: process=" + processName );
+        log.config("Command line args: spoof=" + spoof );
+        
         InputSource inputSource = new InputSource(config);
 
         configureGangliaFromXML( agent, inputSource, host, port, mode, 
-            wireformat);
+            wireformat, spoof );
         configureJMXetricFromXML( agent, inputSource, config, processName );
     }
 
@@ -119,11 +124,13 @@ public class XMLConfigurationService {
      * @param cmdLinePort the port found on the agent arg list
      * @param cmdLineMode the mode found on the agent arg list
      * @param v31x true if the ganglia v31x wire format should be used
+     * @param cmdLineSpoof the spoof value found on the agent arg list
      * @throws java.lang.Exception
      */
     private static void configureGangliaFromXML(JMXetricAgent agent, 
             InputSource inputSource, String cmdLineHost, 
-            String cmdLinePort, String cmdLineMode, String cmdLinev31x) throws Exception {
+            String cmdLinePort, String cmdLineMode, String cmdLinev31x, String cmdLineSpoof)
+                    throws Exception {
         // Gets the config for ganglia
         // Note that the ganglia config needs to be found before the samplers 
         // are created.
@@ -145,14 +152,17 @@ public class XMLConfigurationService {
         String stringv31x = selectParameterFromNode( cmdLinev31x, 
         		g, "wireformat31x", "false");
         boolean v31x = Boolean.parseBoolean(stringv31x) ;
+        String spoof = selectParameterFromNode( cmdLineSpoof, 
+                g, "spoof", null);
         
         StringBuilder buf = new StringBuilder() ;
         buf.append("GMetric host=").append( hostname );
         buf.append(" port=").append( port );
         buf.append(" mode=").append( mode );
         buf.append(" v31x=").append( v31x );
+        buf.append(" spoof=").append( spoof );
         log.fine(buf.toString());
-        GMetric gmetric = new GMetric(hostname, iport, addressingMode, DEFAULT_TTL, v31x );
+        GMetric gmetric = new GMetric(hostname, iport, addressingMode, DEFAULT_TTL, v31x, null, spoof );
         agent.setGmetric(gmetric);
     }
     /**

@@ -5,7 +5,7 @@
   <artifactId>jmxetric</artifactId>
   <name>JMXetric</name>
   <packaging>jar</packaging>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
   <description>JVM instrumentation to Ganglia</description>
   <url>http://github.com/ganglia/jmxetric</url>
   <licenses>
@@ -32,17 +32,21 @@
       <email>daniel@pocock.com.au</email>
     </developer>
   </developers>
+  <properties>
+    <gmetric4j.version>1.0.3-SNAPSHOT</gmetric4j.version>
+    <oncrpc.version>1.0.7</oncrpc.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>info.ganglia.gmetric4j</groupId>
       <artifactId>gmetric4j</artifactId>
-      <version>1.0.2</version>
+      <version>${gmetric4j.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>info.ganglia.gmetric4j</groupId>
       <artifactId>gmetric4j</artifactId>
-      <version>1.0.2</version>
+      <version>${gmetric4j.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -56,7 +60,7 @@
     <dependency>
       <groupId>org.acplt</groupId>
       <artifactId>oncrpc</artifactId>
-      <version>1.0.7</version>
+      <version>${oncrpc.version}</version>
     </dependency>
   </dependencies>
   <parent>
@@ -65,6 +69,12 @@
     <version>7</version>
   </parent>
   <build>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -81,7 +91,7 @@
         <version>2.4</version>
         <configuration>
           <archive>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+            <manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
       </plugin>
