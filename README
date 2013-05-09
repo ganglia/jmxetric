@@ -2,7 +2,7 @@ Name
     jmxetric - jvm instrumentation to ganglia
 
 Version
-    jmxetric 1.0.3
+    jmxetric 1.0.4-SNAPSHOT
 
     The latest version of this software and document will always be found at 
     https://github.com/ganglia/jmxetric
@@ -50,6 +50,9 @@ Configuration
 	mode          The UDP addressing mode, either multicast or unicast (default multicast)
 	
 	wireformat31x True if the ganglia v3.1.x wire format should be used (default false)
+	
+	spoof         An IP:hostname pair that will be used to spoof the metric host information.
+	              (default: no spoofing, i.e., local hostname reported by OS)
 
     process       A name that is prefixed to the metric name before publication 
                   (so that metrics from different JVMs on the same host can be 
@@ -100,6 +103,7 @@ Configuration
           <!ATTLIST ganglia port CDATA #REQUIRED>
           <!ATTLIST ganglia mode CDATA #REQUIRED>
           <!ATTLIST ganglia wireformat31x CDATA #REQUIRED>
+          <!ATTLIST ganglia spoof CDATA #IMPLIED>
        <!ELEMENT jvm EMPTY>
           <!ATTLIST jvm process CDATA "">
     ]>
