@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+// import java.util.logging.Level;
+// import java.util.logging.Logger;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,8 +24,8 @@ import javax.management.openmbean.CompositeData;
  */
 public class MBeanSampler extends GSampler {
 
-    private static Logger log =
-            Logger.getLogger(JMXetricAgent.class.getName());
+    //private static Logger log =
+    //        Logger.getLogger(JMXetricAgent.class.getName());
     /*
      * The internal data structure is a hashmap of key=mbean name
      */
@@ -84,8 +84,8 @@ public class MBeanSampler extends GSampler {
             }
         } catch ( Exception ex ) {
             // Robust exception to prevent thread death
-            log.warning("Exception thrown sampling Mbeans");
-            log.throwing( this.getClass().getName(), "Exception thrown sampling Mbeans:", ex) ;
+            //log.warning("Exception thrown sampling Mbeans");
+            //log.throwing( this.getClass().getName(), "Exception thrown sampling Mbeans:", ex) ;
         }
     }
 
@@ -125,34 +125,34 @@ public class MBeanSampler extends GSampler {
                     CompositeData cd = (CompositeData) o;
                     if (key != null) {
                         Object val = cd.get(key);
-                        log.fine("Sampling " + objectName +
-                                " attribute " + canonicalName + ":" + val);
+                        // log.fine("Sampling " + objectName +
+                        //         " attribute " + canonicalName + ":" + val);
                         value = val.toString();
                     }
                 } else {
                 	if (null != o){
                 		value = o.toString();
-                		log.fine("Sampling " + objectName +
-                				" attribute " + canonicalName + ":" + o);
+                		// log.fine("Sampling " + objectName +
+                		// 		" attribute " + canonicalName + ":" + o);
                 	}else{
-                		log.fine("Not sampling " + objectName + 
-                				" attribute " + canonicalName + 
-                				" as value is null");
+                		// log.fine("Not sampling " + objectName + 
+                		// 		" attribute " + canonicalName + 
+                		// 		" as value is null");
                 	}
                 }
                 
                 if (null != value){
                 	Publisher gm = getPublisher();
-                	log.finer("Announcing metric " + this.toString() + " value=" + value );
+                	// log.finer("Announcing metric " + this.toString() + " value=" + value );
                 	gm.publish(process, publishName, value, getType(), getSlope(), getUnits());
                 }
                 
             } catch ( javax.management.InstanceNotFoundException ex ) {
-                log.warning("Exception when getting " + objectName + " " + canonicalName);
+                // log.warning("Exception when getting " + objectName + " " + canonicalName);
             } catch (Exception ex) {
-                log.log(Level.WARNING,
-                		"Exception when getting " + objectName + " " + canonicalName,
-                		ex);
+                // log.log(Level.WARNING,
+                // 		"Exception when getting " + objectName + " " + canonicalName,
+                // 		ex);
             }
         }
 
