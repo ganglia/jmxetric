@@ -9,9 +9,11 @@ import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
 //import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -223,6 +225,10 @@ public class XMLConfigurationService {
                     String units = selectParameterFromNode(attr, "units", "" );
                     String pname = selectParameterFromNode(attr, "pname", "");
                     String slope = selectParameterFromNode(attr, "slope", "" );
+                    String interval = selectParameterFromNode(attr, "interval", "0");
+                    if(interval=="") {
+                    	interval="0";
+                    }
                     
                     if ( "".equals(type)) {
                     	//assume that there is a composite attribute to follow
@@ -238,10 +244,15 @@ public class XMLConfigurationService {
                             String compositeSlope = selectParameterFromNode(composite, "slope", "");
                             String metricName = buildMetricName( processName, mbeanName, 
                                     mbeanPublishName, compositeName, compositePname );
+                            String compositeInterval = selectParameterFromNode(composite, "interval", "0");
+                            if(compositeInterval=="") {
+                            	compositeInterval="0";
+                            }
     	                    //log.finer("Attr is " + compositeName);
     	                    mbSampler.addMBeanAttribute(mbeanName, attrName, compositeName, 
     	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits,
-    	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName);
+    	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName, 
+    	                    		Integer.parseInt(compositeInterval));
                         }
                     } else {
                     	// It's a non composite attribute
@@ -250,7 +261,7 @@ public class XMLConfigurationService {
 	                            mbeanPublishName, attrName, pname );
 	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, 
 	                    		GMetricType.valueOf(type.toUpperCase()), units,
-	                    		GMetricSlope.valueOf(slope.toUpperCase()), metricName);
+	                    		GMetricSlope.valueOf(slope.toUpperCase()), metricName, Integer.parseInt(interval));
                     }
                 }
             }

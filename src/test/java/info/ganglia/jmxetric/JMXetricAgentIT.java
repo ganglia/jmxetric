@@ -32,7 +32,7 @@ public class JMXetricAgentIT {
         JMXetricAgent a = null ;
         try {
             a = new JMXetricAgent();
-            XMLConfigurationService.configure(a, "host=localhost,port=8649,wireformat31x=true,config=src/test/resources/jmxetric_test.xml");
+            XMLConfigurationService.configure(a, "host=localhost,port=8649,wireformat31x=false,config=src/test/resources/jmxetric_test.xml");
             a.start();
             Thread.sleep(5000);
             GMetricResult.GMetricDetail floatResult = GMetricResult.getGMetric("ProcessName_TestExample_Float");

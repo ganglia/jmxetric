@@ -35,8 +35,7 @@ public class ExampleComposite {
      
     public String getName() { 
         return name; 
-    } 
-
+    }
 }	
 
 

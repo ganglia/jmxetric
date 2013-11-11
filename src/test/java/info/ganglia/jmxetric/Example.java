@@ -58,6 +58,7 @@ public class Example implements TestExampleMXBean {
 	public int getCounter() {
 		return counter.get();
 	}
+	
 	public ExampleComposite getComposite() {
 		return new ExampleComposite(ExampleComposite.DATE_VALUE, 
 				ExampleComposite.INT_VALUE,
