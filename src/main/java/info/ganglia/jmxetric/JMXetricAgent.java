@@ -4,7 +4,7 @@ package info.ganglia.jmxetric;
 import info.ganglia.gmetric4j.GMonitor;
 
 import java.lang.instrument.Instrumentation;
-import java.util.logging.Logger;
+// import java.util.logging.Logger;
 
 /**
  * JMXetricAgent is a JVM agent that will sample MBean attributes on a periodic basis, 
@@ -25,8 +25,8 @@ import java.util.logging.Logger;
  * </table>
  */
 public class JMXetricAgent extends GMonitor {
-    private static Logger log =
-      Logger.getLogger(JMXetricAgent.class.getName());
+    // private static Logger log =
+    //   Logger.getLogger(JMXetricAgent.class.getName());
    /**
      * A log running, trivial main method for test purposes
      * premain method
@@ -51,7 +51,7 @@ public class JMXetricAgent extends GMonitor {
             XMLConfigurationService.configure(a, agentArgs);
             a.start();
         } catch ( Exception ex ) {
-            log.severe("Exception starting JMXetricAgent");
+            // log.severe("Exception starting JMXetricAgent");
             ex.printStackTrace();
         }
     }

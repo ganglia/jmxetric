@@ -6,7 +6,7 @@ import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
 
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.xpath.XPath;
@@ -20,8 +20,8 @@ import org.xml.sax.InputSource;
  * Configures the JMXetricAgent based on the XML config file
  */
 public class XMLConfigurationService {
-    private static Logger log =
-      Logger.getLogger(JMXetricAgent.class.getName());
+//    private static Logger log =
+//      Logger.getLogger(JMXetricAgent.class.getName());
 
     private final static XPath xpath = XPathFactory.newInstance().newXPath();
     
@@ -54,13 +54,13 @@ public class XMLConfigurationService {
             spoof = getTagValue( "spoof", args, null );
         }
 
-        log.config("Command line argument found: host=" + host );
-        log.config("Command line args: port=" + port );
-        log.config("Command line args: config=" + config );
-        log.config("Command line args: mode=" + mode );
-        log.config("Command line args: wireformat31x=" + wireformat );
-        log.config("Command line args: process=" + processName );
-        log.config("Command line args: spoof=" + spoof );
+        // log.config("Command line argument found: host=" + host );
+        // log.config("Command line args: port=" + port );
+        // log.config("Command line args: config=" + config );
+        // log.config("Command line args: mode=" + mode );
+        // log.config("Command line args: wireformat31x=" + wireformat );
+        // log.config("Command line args: process=" + processName );
+        // log.config("Command line args: spoof=" + spoof );
         
         InputSource inputSource = new InputSource(config);
 
@@ -161,7 +161,7 @@ public class XMLConfigurationService {
         buf.append(" mode=").append( mode );
         buf.append(" v31x=").append( v31x );
         buf.append(" spoof=").append( spoof );
-        log.fine(buf.toString());
+        // log.fine(buf.toString());
         GMetric gmetric = new GMetric(hostname, iport, addressingMode, DEFAULT_TTL, v31x, null, spoof );
         agent.setGmetric(gmetric);
     }
@@ -193,7 +193,7 @@ public class XMLConfigurationService {
         for (int i = 0; i < samples.getLength(); i++) {
             Node sample = samples.item(i);
 
-            log.finer("Sample is " + sample);
+            //log.finer("Sample is " + sample);
             /*
              *         String port = selectParameterFromNode( cmdLinePort, 
         		g, "port", "8649");
@@ -212,7 +212,7 @@ public class XMLConfigurationService {
                 Node mbean = mbeans.item(j);
                 String mbeanName = selectParameterFromNode( mbean, "name", null );
                 String mbeanPublishName = selectParameterFromNode( mbean, "pname", "NULL" );
-                log.finer("Mbean is " + mbeanName);
+                // log.finer("Mbean is " + mbeanName);
                 NodeList attrs = (NodeList) xpath.evaluate("attribute", mbean,
                         XPathConstants.NODESET);
                 //for every attribute
@@ -238,14 +238,14 @@ public class XMLConfigurationService {
                             String compositeSlope = selectParameterFromNode(composite, "slope", "");
                             String metricName = buildMetricName( processName, mbeanName, 
                                     mbeanPublishName, compositeName, compositePname );
-    	                    log.finer("Attr is " + compositeName);
+    	                    //log.finer("Attr is " + compositeName);
     	                    mbSampler.addMBeanAttribute(mbeanName, attrName, compositeName, 
     	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits,
     	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName);
                         }
                     } else {
                     	// It's a non composite attribute
-	                    log.finer("Attr is " + attrName);
+	                    //log.finer("Attr is " + attrName);
 	                    String metricName = buildMetricName( processName, mbeanName, 
 	                            mbeanPublishName, attrName, pname );
 	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, 
