@@ -1,0 +1,45 @@
+
+
+Quickstart for Debian users:
+
+- copy /usr/share/doc/libjmxetric-java/jmxetric.xml - for example:
+
+  mkdir -p /etc/ganglia
+  cp /usr/share/doc/libjmxetric-java/jmxetric.xml /etc/ganglia/jmxetric-tomcat7.xml
+
+- edit the file
+
+  vi /etc/ganglia/jmxetric-tomcat7.xml
+
+  Replace the default metric name prefix "ProcessName" with something
+  meaningful, e.g:
+
+     <jvm process="ProcessName"/>
+
+   becomes:
+
+     <jvm process="tomcat7"/>
+
+   and then your metrics will have names like:
+
+     tomcat7_Heap_usage
+
+- edit your JVM launch script or config file to add the necessary JVM
+  options, for example, if using the tomcat7 package on Debian:
+
+cat >> /etc/default/tomcat7 << EOF
+# for JMXetric
+JARLIB=/usr/share/java
+GANGLIA_ETC=/etc/ganglia
+JMXETRIC_CFG=${GANGLIA_ETC}/jmxetric-tomcat7.xml
+JMXETRIC_PARAMS="host=239.2.11.71,port=8649,wireformat31x=true,mode=multicast,config=${JMXETRIC_CFG}"
+JAVA_OPTS="${JAVA_OPTS} -Xbootclasspath/p:${JARLIB}/oncrpc.jar"
+JAVA_OPTS="${JAVA_OPTS} -Xbootclasspath/p:${JARLIB}/gmetric4j.jar"
+JAVA_OPTS="${JAVA_OPTS} -javaagent:${JARLIB}/jmxetric.jar=${JMXETRIC_PARAMS}"
+EOF
+
+- in the above example, it is using a default multicast config host=239.2.11.71,mode=multicast
+  You can change those parameters if using unicast or a different multicast IP
+
+- now restart the JVM
+
