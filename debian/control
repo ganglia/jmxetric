@@ -1,0 +1,20 @@
+Source: jmxetric
+Section: java
+Priority: optional
+Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+Uploaders: Daniel Pocock <daniel@pocock.com.au>
+Build-Depends: debhelper (>= 9), cdbs (>= 0.4.5.3), default-jdk, remotetea, libgmetric4j-java
+Build-Depends-Indep: maven-repo-helper (>> 0.5), maven-ant-helper (>> 4), ant, ant-optional
+Standards-Version: 3.9.5
+Homepage: https://github.com/ganglia/jmxetric
+Vcs-Git: https://github.com/ganglia/jmxetric.git
+Vcs-Browser: https://github.com/ganglia/jmxetric
+
+Package: libjmxetric-java
+Architecture: all
+Depends: ${misc:Depends}, remotetea, libgmetric4j-java
+Description: JMXetric Ganglia metric transmission API
+ jmxetric is a 100% java, configurable Ganglia agent that periodically polls
+ arbitrary JMX attributes and reports their values to Ganglia.
+ .
+ It supports both the v3.1 wire format and the legacy wire format.

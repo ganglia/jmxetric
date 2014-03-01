@@ -1,0 +1,6 @@
+jmxetric (1.0.5-1) unstable; urgency=low
+
+  * Initial packaging (Closes: #740431)
+
+ -- Daniel Pocock <daniel@pocock.com.au>  Sat, 01 Mar 2014 14:36:16 +0100
+

@@ -1,0 +1,9 @@
+
+This builds the package:
+
+git-buildpackage -rfakeroot \
+    --git-debian-branch=debian \
+    --git-upstream-branch=master \
+    --git-upstream-tag='%(version)s' \
+    -i"'(^.git|^target|pom.xml)'"
+
