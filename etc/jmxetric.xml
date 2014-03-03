@@ -51,6 +51,16 @@
 		<mbean name="java.lang:type=OperatingSystem" pname="OS" >
 			<attribute name="ProcessCpuTime" type="int32" slope="positive"/>
 		</mbean>
+
+		<!-- This is a sample configuration for a Tomcat server (AJP port) -->
+		<!-- <mbean name='Catalina:type=GlobalRequestProcessor,name="ajp-bio-8009"' pname="ajp">
+			<attribute name="requestCount" type="int32" slope="positive" units="hits"/>
+		</mbean> -->
+
+		<!-- This is a sample configuration for a Tomcat server (HTTP port) -->
+		<!-- <mbean name='Catalina:type=GlobalRequestProcessor,name="http-bio-8080"' pname="http">
+			<attribute name="requestCount" type="int32" slope="positive" units="hits"/>
+		</mbean> -->
 	</sample>
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
 </jmxetric-config>
