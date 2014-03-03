@@ -29,7 +29,7 @@
 ]>
 <jmxetric-config>
 	<jvm process="ProcessName"/>
-	<sample initialdelay="20" delay="300">
+	<sample initialdelay="20" delay="60">
 		<mbean name="java.lang:type=Memory" pname="Memory">
 			<attribute name="HeapMemoryUsage">
 				<composite name="init" pname="Heap_init" type="int32" units="bytes"/>
