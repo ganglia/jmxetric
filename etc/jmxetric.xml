@@ -66,6 +66,12 @@
 		<!-- <mbean name="jboss.as:subsystem=web,connector=http" pname="http">
 			<attribute name="requestCount" type="int32" slope="positive"/>
 		</mbean> -->
+
+		<!-- This is a sample configuration for a HornetQ server (message queue depth for queue named testQueue) -->
+		<!-- <mbean name='org.hornetq:module=Core,type=Queue,address="jms.queue.testQueue",name="jms.queue.testQueue"' pname="queue_testQueue">
+			<attribute name="MessageCount" type="int32" slope="both"/>
+			<attribute name="ConsumerCount" type="int32" slope="both"/>
+		</mbean> -->
 	</sample>
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
 </jmxetric-config>
