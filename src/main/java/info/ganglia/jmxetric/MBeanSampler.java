@@ -30,7 +30,7 @@ public class MBeanSampler extends GSampler {
      * The internal data structure is a hashmap of key=mbean name
      */
     private Map<String, MBeanHolder> mbeanMap = new HashMap<String, MBeanHolder>();
-    private MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+    private MBeanServer mbs = null;
 
     /**
      * Creates an MBeanSampler
@@ -120,6 +120,9 @@ public class MBeanSampler extends GSampler {
         public void publish(ObjectName objectName) {
             try {
                 String value = null;
+                if(mbs == null) {
+                    mbs = ManagementFactory.getPlatformMBeanServer();
+                }
                 Object o = mbs.getAttribute(objectName, attributeName);
                 if (o instanceof CompositeData) {
                     CompositeData cd = (CompositeData) o;
