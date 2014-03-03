@@ -1,3 +1,9 @@
+jmxetric (1.0.6-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Daniel Pocock <daniel@pocock.com.au>  Mon, 03 Mar 2014 19:40:53 +0100
+
 jmxetric (1.0.5-2) unstable; urgency=low
 
   * Add sample jmxetric.xml to package
