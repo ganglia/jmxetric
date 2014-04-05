@@ -47,18 +47,33 @@ public class MBeanSampler extends GSampler {
      * @param attribute the name of the attribute
      * @param composite the name of the composite
      * @param publishName the name to publish this attribute on
+     * @param tmax maximum time (in seconds) between gmetric calls
+     * @param dmax lifetime (in seconds) of this metric (use 0 for always alive)
      * @throws java.lang.Exception
      */
     public void addMBeanAttribute(String mbean, String attribute, String composite, 
                 GMetricType type, String units, GMetricSlope slope,
-                String publishName ) throws Exception {
+                String publishName, int dmax ) throws Exception {
         MBeanHolder mbeanHolder = mbeanMap.get(mbean);
         if (mbeanHolder == null) {
             mbeanHolder = new MBeanHolder(mbean);
             mbeanMap.put(mbean, mbeanHolder);
         }
 
-        mbeanHolder.addAttribute(attribute, composite, type, slope, units, publishName);
+        mbeanHolder.addAttribute(attribute, composite, type, slope, units, publishName, dmax);
+    }
+    /**
+     * Adds a mbean name/attribute pair to be sampled
+     * @param mbean the name of the mbean
+     * @param attribute the name of the attribute
+     * @param composite the name of the composite
+     * @param publishName the name to publish this attribute on
+     * @throws java.lang.Exception
+     */
+    public void addMBeanAttribute(String mbean, String attribute, String composite,
+                GMetricType type, String units, GMetricSlope slope,
+                String publishName ) throws Exception {
+        addMBeanAttribute(mbean, attribute, composite, type, units, slope, publishName, 0);
     }
     /**
      * Adds a mbean name/attribute pair to be sampled
@@ -101,9 +116,10 @@ public class MBeanSampler extends GSampler {
         private GMetricType type ;
         private GMetricSlope slope ;
         private String publishName ;
+        private int dmax ;
 
         public MBeanAttribute(String attributeName, String compositeKey, GMetricType type, 
-                                String units, GMetricSlope slope, String publishName ) {
+                                String units, GMetricSlope slope, String publishName, int dmax ) {
             this.key = compositeKey ;
             this.canonicalName = attributeName + "." + compositeKey ;
             this.attributeName = attributeName;
@@ -111,10 +127,11 @@ public class MBeanSampler extends GSampler {
             this.type = type ;
             this.slope = slope ;
             this.publishName = publishName ;
+            this.dmax = dmax;
         }
         public MBeanAttribute(String attributeName, GMetricType type, GMetricSlope slope,  
-                String units, String publishName ) {
-			this(attributeName, null, type, units, slope, publishName);
+                String units, String publishName, int dmax ) {
+			this(attributeName, null, type, units, slope, publishName, dmax);
         }
 
         public void publish(ObjectName objectName) {
@@ -183,6 +200,10 @@ public class MBeanSampler extends GSampler {
             return key;
         }
 
+        public int getDMax() {
+            return dmax;
+        }
+
         @Override
         public String toString() {
         	StringBuilder buf = new StringBuilder() ;
@@ -192,6 +213,7 @@ public class MBeanSampler extends GSampler {
         	buf.append(" type=").append(type);
         	buf.append(" slope=").append(slope);
         	buf.append(" publishName=").append(publishName);
+               buf.append(" dmax=").append(dmax);
             return buf.toString();
         }
 
@@ -226,9 +248,10 @@ public class MBeanSampler extends GSampler {
         }
 
         public void addAttribute(String attributeName, String compositeName, 
-        		GMetricType type, GMetricSlope slope, String units, String publishName ) {
+        		GMetricType type, GMetricSlope slope, String units, String publishName,
+        		int dmax) {
             attributes.add(new MBeanAttribute(attributeName, compositeName,
-            		type, units, slope, publishName));
+            		type, units, slope, publishName, dmax));
         }
 
         public void publish() {

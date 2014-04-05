@@ -4,6 +4,7 @@
    <!ELEMENT sample (mbean)*>
       <!ATTLIST sample delay CDATA #REQUIRED>
       <!ATTLIST sample initialdelay CDATA "0">
+      <!ATTLIST sample dmax CDATA "" >
    <!ELEMENT mbean (attribute)*>
       <!ATTLIST mbean name CDATA #REQUIRED>
       <!ATTLIST mbean pname CDATA #REQUIRED>
@@ -13,12 +14,14 @@
       <!ATTLIST attribute units CDATA "" >
       <!ATTLIST attribute pname CDATA "" >
       <!ATTLIST attribute slope CDATA "both" >
+      <!ATTLIST attribute dmax CDATA "" >
    <!ELEMENT composite EMPTY>
       <!ATTLIST composite name CDATA #REQUIRED>
       <!ATTLIST composite type CDATA "" >
       <!ATTLIST composite units CDATA "" >
       <!ATTLIST composite pname CDATA "" >
       <!ATTLIST composite slope CDATA "both" >
+      <!ATTLIST composite dmax CDATA "" >
    <!ELEMENT ganglia EMPTY>
       <!ATTLIST ganglia hostname CDATA #REQUIRED>
       <!ATTLIST ganglia port CDATA #REQUIRED>
