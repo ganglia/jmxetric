@@ -5,7 +5,7 @@
   <artifactId>jmxetric</artifactId>
   <name>JMXetric</name>
   <packaging>jar</packaging>
-  <version>1.0.6</version>
+  <version>1.0.7</version>
   <description>JVM instrumentation to Ganglia</description>
   <url>http://github.com/ganglia/jmxetric</url>
   <licenses>
