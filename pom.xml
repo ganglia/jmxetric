@@ -33,7 +33,7 @@
     </developer>
   </developers>
   <properties>
-    <gmetric4j.version>1.0.4</gmetric4j.version>
+    <gmetric4j.version>1.0.7</gmetric4j.version>
     <oncrpc.version>1.0.7</oncrpc.version>
   </properties>
   <dependencies>
