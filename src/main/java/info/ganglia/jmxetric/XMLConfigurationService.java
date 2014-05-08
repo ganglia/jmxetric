@@ -204,6 +204,7 @@ public class XMLConfigurationService {
             int delay = Integer.parseInt(delayString);
             String initialDelayString = selectParameterFromNode( sample, "initialdelay", "0");
             int initialDelay = Integer.parseInt(initialDelayString);
+            String sampleDMax = selectParameterFromNode(sample, "dmax", "0");
             MBeanSampler mbSampler = new MBeanSampler(initialDelay, delay, processName);
             NodeList mbeans = (NodeList) xpath.evaluate("mbean", sample,
                     XPathConstants.NODESET);
@@ -223,6 +224,8 @@ public class XMLConfigurationService {
                     String units = selectParameterFromNode(attr, "units", "" );
                     String pname = selectParameterFromNode(attr, "pname", "");
                     String slope = selectParameterFromNode(attr, "slope", "" );
+                    String dMax = selectParameterFromNode(attr, "dmax",
+                            selectParameterFromNode(mbean, "dmax", sampleDMax));
                     
                     if ( "".equals(type)) {
                     	//assume that there is a composite attribute to follow
@@ -236,12 +239,14 @@ public class XMLConfigurationService {
                             String compositeUnits = selectParameterFromNode(composite, "units", "");
                             String compositePname = selectParameterFromNode(composite, "pname", "");
                             String compositeSlope = selectParameterFromNode(composite, "slope", "");
+                            String compositeDMax = selectParameterFromNode(composite, "dmax", dMax);
                             String metricName = buildMetricName( processName, mbeanName, 
                                     mbeanPublishName, compositeName, compositePname );
     	                    //log.finer("Attr is " + compositeName);
     	                    mbSampler.addMBeanAttribute(mbeanName, attrName, compositeName, 
     	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits,
-    	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName);
+    	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName,
+    	                    		Integer.parseInt(compositeDMax));
                         }
                     } else {
                     	// It's a non composite attribute
@@ -250,7 +255,8 @@ public class XMLConfigurationService {
 	                            mbeanPublishName, attrName, pname );
 	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, 
 	                    		GMetricType.valueOf(type.toUpperCase()), units,
-	                    		GMetricSlope.valueOf(slope.toUpperCase()), metricName);
+	                    		GMetricSlope.valueOf(slope.toUpperCase()), metricName,
+	                    		Integer.parseInt(dMax));
                     }
                 }
             }

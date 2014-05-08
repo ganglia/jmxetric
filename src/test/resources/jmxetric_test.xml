@@ -3,21 +3,25 @@
    <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>
    <!ELEMENT sample (mbean)*>
       <!ATTLIST sample delay CDATA #REQUIRED>
+      <!ATTLIST sample dmax CDATA "" >
    <!ELEMENT mbean (attribute)*>
       <!ATTLIST mbean name CDATA #REQUIRED>
       <!ATTLIST mbean pname CDATA #REQUIRED>
+      <!ATTLIST mbean dmax CDATA "" >
    <!ELEMENT attribute (composite*)>
       <!ATTLIST attribute name CDATA #REQUIRED>
       <!ATTLIST attribute type CDATA "" >
       <!ATTLIST attribute units CDATA "" >
       <!ATTLIST attribute pname CDATA "" >
       <!ATTLIST attribute slope CDATA "both" >
+      <!ATTLIST attribute dmax CDATA "" >
    <!ELEMENT composite EMPTY>
       <!ATTLIST composite name CDATA #REQUIRED>
       <!ATTLIST composite type CDATA "" >
       <!ATTLIST composite units CDATA "" >
       <!ATTLIST composite pname CDATA "" >
       <!ATTLIST composite slope CDATA "both" >
+      <!ATTLIST composite dmax CDATA "" >
    <!ELEMENT ganglia EMPTY>
       <!ATTLIST ganglia hostname CDATA #REQUIRED>
       <!ATTLIST ganglia port CDATA #REQUIRED>
@@ -43,16 +47,18 @@
 				<composite name="max" pname="NonHeap_max" type="int32" units="bytes" />
 			</attribute>
 		</mbean>
-		<mbean name="jmxetric:type=TestExample" pname="TestExample">
+	</sample>
+	<sample delay="3" dmax="1">
+		<mbean name="jmxetric:type=TestExample" pname="TestExample" dmax="2">
 			<attribute name="Int" type="int32" />
 			<attribute name="Long" type="int32" />
 			<attribute name="Double" type="double" />
 			<attribute name="Float" type="float" />
 			<attribute name="String" type="string" />
 			<attribute name="Counter" type="int32" slope="positive" />
-			<attribute name="Composite">
+			<attribute name="Composite" dmax="3">
 				<composite name="date" pname="Composite_date" type="String" units="bytes"/>
-				<composite name="integer" pname="Composite_integer" type="int32" units="bytes"/>
+				<composite name="integer" pname="Composite_integer" type="int32" units="bytes" dmax="4"/>
 				<composite name="name" pname="Composite_name" type="int32" units="bytes" />
 			</attribute>
 		</mbean>
