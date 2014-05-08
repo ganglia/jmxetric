@@ -48,7 +48,7 @@ public class XMLConfigurationService {
             host = getTagValue( "host", args, null );
             port = getTagValue( "port", args, null );
             config = getTagValue( "config", args, DEFAULT_CONFIG );
-            mode = getTagValue( "mode", args, DEFAULT_MODE );
+            mode = getTagValue( "mode", args, null );
             wireformat = getTagValue( "wireformat31x", args, null);
             processName = getTagValue( "process", args, null );
             spoof = getTagValue( "spoof", args, null );
@@ -144,7 +144,7 @@ public class XMLConfigurationService {
         		g, "port", "8649");
         int iport = Integer.parseInt(port);
         String mode = selectParameterFromNode( cmdLineMode,
-        		g, "mode","multicast");
+        		g, "mode",DEFAULT_MODE);
         UDPAddressingMode addressingMode = UDPAddressingMode.MULTICAST;
         if ( mode.toLowerCase().equals("unicast")) {
         	addressingMode = UDPAddressingMode.UNICAST;
