@@ -164,7 +164,7 @@ public class MBeanSampler extends GSampler {
                 if (null != value){
                 	Publisher gm = getPublisher();
                 	// log.finer("Announcing metric " + this.toString() + " value=" + value );
-                	gm.publish(process, publishName, value, getType(), getSlope(), getDelay(), getUnits());
+                	gm.publish(process, publishName, value, getType(), getSlope(), getDelay(), getDMax(), getUnits());
                 }
                 
             } catch ( javax.management.InstanceNotFoundException ex ) {
