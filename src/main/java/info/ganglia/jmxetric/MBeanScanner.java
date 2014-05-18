@@ -1,11 +1,8 @@
 package info.ganglia.jmxetric;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -25,117 +22,121 @@ import javax.management.openmbean.CompositeType;
 
 /**
  * A utility class that scans the platform MBeanServer for registered
- * MBeans/MXBeans, and generates an XML configuration file that JMXetric can
- * use.
+ * MBeans/MXBeans.
+ * The MBeans are queried and represented as private objects
+ * @see Config
+ * @see MBeanConfig
+ * @see MBeanAttributeConfig
+ * @see MBeanCompositeConfig
+ * These objects are then written using @see ConfigWriter to a {@link java.io.PrintStream}.
  * 
  * @author Ng Zhi An
  * 
  */
 public class MBeanScanner {
-	private static class XmlTag {
-		boolean isSelfClosing = false;
-		String _tag;
-		String _value = "";
-		List<XmlTag> _innerTags = new Vector<XmlTag>();
-		Map<String, String> _attributes = new HashMap<String, String>();
-
-		public XmlTag(String tag) {
-			if (tag == null) tag = "mbean";
-			this._tag = tag;
-		}
-
-		public void setSelfClosing(boolean self) {
-			isSelfClosing = self;
-		}
-
-		public void setValue(String value) {
-			if (value == null) return;
-			_value = value;
-		}
-
-		public void addInnerTag(XmlTag tag) {
-			if (tag == null) return;
-			this._innerTags.add(tag);
-		}
-
-		public void addAttribute(String name, String value) {
-			_attributes.put(name, value);
-		}
-
-		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			sb.append("<" + _tag);
-			for (String key : _attributes.keySet()) {
-				sb.append(" " + key + "=" + "\"" + _attributes.get(key) + "\"");
-			}
-			if (isSelfClosing) {
-				sb.append("/>\n");
-			} else {
-				sb.append(">\n" + valueToString() + "</" + _tag + ">\n");
-			}
-			return sb.toString();
-		}
-
-		public String valueToString() {
-			if (_innerTags.size() == 0) {
-				return _value;
-			}
-			StringBuilder sb = new StringBuilder();
-			for (XmlTag tag : _innerTags) {
-				sb.append(tag.toString());
-			}
-			return sb.toString();
-		}
-	}
-	
-	private static class ConfigWriter {
-		private static ConfigWriter configWriter;
-		private OutputStream out;
-		public static ConfigWriter getInstance() {
-			if (configWriter == null) return new ConfigWriter();
-			else return configWriter;
-		}
-		public void setOutputStream(OutputStream output) {
-			this.out = output;
-		}
-		public void writeTag(XmlTag tag) {
-			PrintWriter pw = new PrintWriter(out);
-			pw.print(tag);
-		}
-	}
-
 	private MBeanServer mBeanServer = ManagementFactory
 			.getPlatformMBeanServer();
 
+	/* Data types that represent the MBean configuration */
+
 	/**
-	 * Makes an XML <attribute> tag from the attributes of an MBean
+	 * Method that can be called to output a test configuration file to
+	 * System.out
 	 * 
-	 * @param oa
-	 *            ObjectName representing the MBean
-	 * @param info
-	 *            information on an exposed MBean attribute
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		MBeanScanner mBeanScanner = new MBeanScanner();
+		List<Config> configs = mBeanScanner.scan();
+		ConfigWriter cw;
+		cw = new ConfigWriter(System.out, configs);
+		cw.write();
+	}
+
+	/**
+	 * Scans the platform MBean server for registered MBeans, creating
+	 * @see Config objects to represent these MBeans.
+	 */
+	public List<Config> scan() {
+		Set<ObjectInstance> mBeanObjects = mBeanServer.queryMBeans(null, null);
+		List<Config> configs = getConfigForAllMBeans(mBeanObjects);
+		return configs;
+	}
+
+	/**
+	 * Constructs a configuration for each MBean. 
+	 * @param mBeanObjects
 	 * @return
 	 */
-	public XmlTag makeAttributeTag(ObjectName oa, MBeanAttributeInfo info) {
-		// type determines if this should be composite
-		// need to convert types to proper
-		// @see info.ganglia.gmetric4j.gmetric.GMetricType
+	private List<Config> getConfigForAllMBeans(Set<ObjectInstance> mBeanObjects) {
+		List<Config> configs = new Vector<Config>();
+		for (ObjectInstance objectInstance : mBeanObjects) {
+			Config configMB = scanOneMBeanObject(objectInstance);
+			configs.add(configMB);
+		}
+		return configs;
+	}
+
+	/**
+	 * Constructs the configuration for a single MBean.
+	 * The configuration includes the name, e.g. "java.util.loggin:type=Logging",
+	 * and the attributes belonging to that MBean.
+	 * @param objectInstance MBean object instance
+	 * @return configuration representing this MBean
+	 */
+	private Config scanOneMBeanObject(ObjectInstance objectInstance) {
+		MBeanConfig mBeanConfig = new MBeanConfig();
+		ObjectName objectName = objectInstance.getObjectName();
+		mBeanConfig.addField("name", objectName.getCanonicalName());
+		scanMBeanAttributes(mBeanConfig, objectName);
+		return mBeanConfig;
+	}
+
+	/**
+	 * Stores all attributes of an MBean into its MBeanConfig object
+	 * @param mBeanConfig the configuration object to store the attributes into
+	 * @param mBeanName the name of the MBean object we are getting the attributes from
+	 */
+	private void scanMBeanAttributes(MBeanConfig mBeanConfig, ObjectName mBeanName) {
+		MBeanInfo mBeanInfo;
 		try {
-			Object attr = mBeanServer.getAttribute(oa, info.getName());
-			XmlTag attributeTag = new XmlTag("attribute");
-			attributeTag.addAttribute("name", info.getName());
+			mBeanInfo = mBeanServer.getMBeanInfo(mBeanName);
+			MBeanAttributeInfo[] infos = mBeanInfo.getAttributes();
+			for (int i = 0; i < infos.length; i++) {
+				MBeanAttributeConfig cMBAttr = makeConfigMBeanAttribute(
+						mBeanName, infos[i]);
+				mBeanConfig.addChild(cMBAttr);
+			}
+		} catch (IntrospectionException | InstanceNotFoundException
+				| ReflectionException e) {
+			System.err.println(e.getMessage());
+		}
+	
+	}
+
+	/**
+	 * Creates an object to represent a single attribute of an MBean.
+	 * An attribute can be a simple attribute, or made up composites.
+	 * @param mBeanName
+	 * @param attributeInfo
+	 * @return
+	 */
+	private MBeanAttributeConfig makeConfigMBeanAttribute(ObjectName mBeanName,
+			MBeanAttributeInfo attributeInfo) {
+		// type determines if this should be composite
+		try {
+			Object attr = mBeanServer.getAttribute(mBeanName, attributeInfo.getName());
+			MBeanAttributeConfig config = new MBeanAttributeConfig();
+			config.addField("name", attributeInfo.getName());
+	
 			if (attr == null) {
 				return null;
 			} else if (attr instanceof CompositeData) {
-				List<XmlTag> compositeTags = makeCompositeDataTags((CompositeData) attr);
-				attributeTag._innerTags = compositeTags;
-//				attributeTag.setValue(compositeTags + System.lineSeparator());
+				addComposites(config, (CompositeData) attr);
 			} else {
-				attributeTag.setSelfClosing(true);
-				attributeTag.addAttribute("type",
-						translateDataType(info.getType()));
+				config.addField("type", translateDataType(attributeInfo.getType()));
 			}
-			return attributeTag;
+			return config;
 		} catch (AttributeNotFoundException | InstanceNotFoundException
 				| MBeanException | ReflectionException | RuntimeMBeanException e) {
 			System.err.println(e.getMessage());
@@ -144,104 +145,41 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * Builds the <composite> tags within an <attribute>
-	 * 
-	 * @param compositeData
-	 * @return
+	 * Adds the composite data of an MBean's attribute to an MBeanAttributeConfig
+	 * @param config configuration which the composite belongs to
+	 * @param compositeData object representing the composite data
 	 */
-	public List<XmlTag> makeCompositeDataTags(CompositeData compositeData) {
-		List<XmlTag> tags = new Vector<XmlTag>();
+	private void addComposites(MBeanAttributeConfig config,
+			CompositeData compositeData) {
 		CompositeType compositeType = compositeData.getCompositeType();
-		StringBuffer sb = new StringBuffer();
 		for (String key : compositeType.keySet()) {
-			tags.add(makeCompositeTag(compositeType, key));
+			config.addChild(makeComposite(compositeType, key));
 		}
-		return tags;
 	}
 
 	/**
-	 * Builds a single <composite> tag containing the name and type of the data
-	 * 
+	 * Makes a configuration for JMXetric that represents the composite tag
 	 * @param compositeType
 	 * @param name
 	 * @return
 	 */
-	public XmlTag makeCompositeTag(CompositeType compositeType, String name) {
-		XmlTag compositeXmlTag = new XmlTag("composite");
-		compositeXmlTag.setSelfClosing(true);
-		compositeXmlTag.addAttribute("name", name);
-		String recognizedDataType = translateDataType(compositeType.getType(
-				name).toString());
-		compositeXmlTag.addAttribute("type", recognizedDataType);
-		return compositeXmlTag;
-//		return compositeXmlTag.toString();
-	}
-	
-	public class AttributeValue {
-		public String attribute;
-		public String value;
-		public AttributeValue(String attr, String val) {
-			this.attribute = attr;
-			this.value = val;
-		}
-	}
-	
-	private class ConfigMBean {
-		private List<AttributeValue> mBeanAttributes;
-		private List<ConfigMBeanAttribute> childAttributes;
-	}
-	
-	private class ConfigMBeanAttribute {
-		public String name;
-		public boolean isComposite;
-		private List<ConfigMBeanComposite> composites;
-	}
-	
-	private class ConfigMBeanComposite {
-		private List<AttributeValue> attributes;
+	private MBeanCompositeConfig makeComposite(CompositeType compositeType,
+			String name) {
+		MBeanCompositeConfig config = new MBeanCompositeConfig();
+		config.addField("name", name);
+		String rawType = compositeType.getType(name).toString();
+		config.addField("type", translateDataType(rawType));
+		return config;
 	}
 
-	public void run() {
-		XmlTag jmxetricTag = new XmlTag("jmxetric-config");
-
-		XmlTag jvmTag = new XmlTag("jvm");
-		jvmTag.setSelfClosing(true);
-		jvmTag.addAttribute("process", "ProcessName"); // default process name
-
-		XmlTag sampleTag = new XmlTag("sample");
-
-		jmxetricTag.addInnerTag(jvmTag);
-		jmxetricTag.addInnerTag(sampleTag);
-
-		Set<ObjectInstance> mBeanObjects = mBeanServer.queryMBeans(null, null);
-		Map<String, XmlTag> mBeansTags = new HashMap<String, XmlTag>();
-		for (ObjectInstance objectInstance : mBeanObjects) {
-			XmlTag mBeanTag = new XmlTag("mbean");
-			mBeanTag.addAttribute("name", objectInstance.getObjectName().getCanonicalName());
-			mBeansTags.put(objectInstance.getObjectName().getCanonicalName(), mBeanTag);
-			try {
-				ObjectName objectName = objectInstance.getObjectName();
-				MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(objectName);
-				MBeanAttributeInfo[] info = mBeanInfo.getAttributes();
-				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < info.length; i++) {
-					mBeanTag.addInnerTag(makeAttributeTag(objectName, info[i]));
-				}
-				sampleTag.addInnerTag(mBeanTag);
-			} catch (IntrospectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstanceNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ReflectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		System.out.println(jmxetricTag);
-	}
-
+	/**
+	 * The date types returned by JMX calls are no the same as those
+	 * accepted by JMXetric and Ganglia.
+	 * This methods provides the translation.
+	 * e.g. java.lang.Long -> int8
+	 * @param possibleData the data type string returned by Java JMX methods
+	 * @return a data type string that Ganglia recognizes
+	 */
 	private String translateDataType(String possibleData) {
 		if (possibleData.equals("string") | possibleData.equals("int8")
 				| possibleData.equals("uint8") | possibleData.equals("int16")
@@ -260,8 +198,195 @@ public class MBeanScanner {
 		return "string";
 	}
 
-	public static void main(String[] args) {
-		MBeanScanner mBeanScanner = new MBeanScanner();
-		mBeanScanner.run();
+	/**
+	 * Config is a super class that represents a type of configuration that is
+	 * fed into JMXetric.
+	 * 
+	 * @author Ng Zhi An
+	 * 
+	 */
+	private class Config {
+		String name;
+		boolean hasChildren = false;
+		List<KeyValue> fields = new Vector<KeyValue>();
+		List<Config> children = new Vector<Config>();
+
+		/* Users are not supposed to instantiate this class */
+		private Config() {
+		};
+
+		void addField(String key, String val) {
+			fields.add(new KeyValue(key, val));
+		}
+
+		void addChild(Config config) {
+			if (config == null)
+				return;
+			hasChildren = true;
+			children.add(config);
+		}
+
+		public String toString() {
+			return name + " " + fieldsToString();
+		}
+
+		public String fieldsToString() {
+			String result = "";
+			for (KeyValue kv : fields) {
+				result += kv.toString() + " ";
+			}
+			// remove the trailing whitespace
+			return result.substring(0, result.length() - 1);
+		}
+	}
+
+	/**
+	 * Represents a configuration with the name "mbean". This is the "<mbean>"
+	 * tag in the XML configuration file.
+	 * 
+	 * @author Ng Zhi An
+	 * 
+	 */
+	private class MBeanConfig extends Config {
+		public MBeanConfig() {
+			this.name = "mbean";
+		}
+	}
+
+	/**
+	 * Represents a configuration with the name "attribute". This is the
+	 * "<attribute>" tag in the XML configuration file.
+	 * 
+	 * @author Ng Zhi An
+	 * 
+	 */
+	private class MBeanAttributeConfig extends Config {
+		public MBeanAttributeConfig() {
+			this.name = "attribute";
+		}
+	}
+
+	/**
+	 * Represents a configuration with the name "composite". This is the
+	 * "<composite>" tag in the XML configuration file.
+	 * 
+	 * @author Ng Zhi An
+	 * 
+	 */
+	private class MBeanCompositeConfig extends Config {
+		public MBeanCompositeConfig() {
+			this.name = "composite";
+		}
+	}
+
+	public class KeyValue {
+		public String key;
+		public String val;
+
+		public KeyValue(String key, String val) {
+			this.key = key;
+			this.val = val;
+		}
+
+		public String toString() {
+			return key + "=\"" + val + "\"";
+		}
+	}
+
+	/**
+	 * Writes the configuration to a {@link java.io.PrintStream}.
+	 * The output is in the XML format, which is what JMXetric reads in.
+	 * @author ng
+	 *
+	 */
+	private static class ConfigWriter {
+		/**
+		 * The output stream that the configuration will be written to.
+		 */
+		private PrintStream out;
+		/**
+		 * The list of configurations to be written.
+		 */
+		private List<Config> configs;
+		/**
+		 * System-specific new-line separator.
+		 */
+		private static final String NL = System.lineSeparator();
+		private static final String XML_DECL = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>";
+		private static final String XML_DOCTYPE = "<!DOCTYPE jmxetric-config ["
+				+ NL + "  <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>"
+				+ NL + "  <!ELEMENT sample (mbean)*>" + NL
+				+ "    <!ATTLIST sample delay CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST sample initialdelay CDATA \"0\">" + NL
+				+ "    <!ATTLIST sample dmax CDATA \"0\" >" + NL
+				+ "  <!ELEMENT mbean (attribute)*>" + NL
+				+ "    <!ATTLIST mbean name CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST mbean pname CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST mbean dmax CDATA \"0\" >"
+				+ "  <!ELEMENT attribute (composite*)>" + NL
+				+ "    <!ATTLIST attribute name CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST attribute type CDATA \"\" >" + NL
+				+ "    <!ATTLIST attribute units CDATA \"\" >" + NL
+				+ "    <!ATTLIST attribute pname CDATA \"\" >" + NL
+				+ "    <!ATTLIST attribute slope CDATA \"both\" >" + NL
+				+ "    <!ATTLIST attribute dmax CDATA \"0\" >" + NL
+				+ "  <!ELEMENT composite EMPTY>" + NL
+				+ "    <!ATTLIST composite name CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST composite type CDATA \"\" >" + NL
+				+ "    <!ATTLIST composite units CDATA \"\" >" + NL
+				+ "    <!ATTLIST composite pname CDATA \"\" >" + NL
+				+ "    <!ATTLIST composite slope CDATA \"both\" >" + NL
+				+ "    <!ATTLIST composite dmax CDATA \"0\" >" + NL
+				+ "  <!ELEMENT ganglia EMPTY>" + NL
+				+ "    <!ATTLIST ganglia hostname CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST ganglia port CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST ganglia mode CDATA #REQUIRED>" + NL
+				+ "    <!ATTLIST ganglia wireformat31x CDATA #REQUIRED>" + NL
+				+ "  <!ELEMENT jvm EMPTY>" + NL
+				+ "    <!ATTLIST jvm process CDATA \"\">" + NL + "]>";
+
+		public ConfigWriter(PrintStream outputStream, List<Config> config) {
+			this.out = outputStream;
+			this.configs = config;
+		}
+
+		public void write() {
+			if (configs == null)
+				return;
+			StringBuilder sb = new StringBuilder();
+			sb.append(XML_DECL + NL);
+			sb.append(XML_DOCTYPE + NL);
+			sb.append("<jmxetric-config>" + NL);
+			sb.append("  <jvm process=\"ProcessName\"/>" + NL);
+			sb.append("  <sample initialdelay=\"20\" delay=\"60\">" + NL);
+			String output = writeConfigList(configs, "    ");
+			sb.append(output);
+			sb.append("  </sample>" + NL);
+			sb.append("</jmxetric-config>" + NL);
+			out.print(sb.toString());
+		}
+
+		public String writeConfigList(List<Config> list, String indent) {
+			StringBuilder sb = new StringBuilder();
+			for (Config config : list) {
+				sb.append(writeConfig(config, indent) + NL);
+			}
+			return sb.toString();
+		}
+
+		private String writeConfig(Config config, String indent) {
+			StringBuffer sb = new StringBuffer();
+			sb.append(indent + "<" + config.name + " "
+					+ config.fieldsToString());
+			if (!config.hasChildren) {
+				// self-closing XML tag
+				sb.append("/>");
+			} else {
+				sb.append(">" + NL);
+				sb.append(writeConfigList(config.children, "  " + indent));
+				sb.append(indent + "</" + config.name + ">" + NL);
+			}
+			return sb.toString();
+		}
 	}
 }
