@@ -246,7 +246,7 @@ public class XMLConfigurationService {
     	                    mbSampler.addMBeanAttribute(mbeanName, attrName, compositeName, 
     	                    		GMetricType.valueOf(compositeType.toUpperCase()), compositeUnits,
     	                    		GMetricSlope.valueOf(compositeSlope.toUpperCase()), metricName,
-    	                    		Integer.parseInt(compositeDMax));
+    	                    		parseDMax(compositeDMax));
                         }
                     } else {
                     	// It's a non composite attribute
@@ -256,13 +256,30 @@ public class XMLConfigurationService {
 	                    mbSampler.addMBeanAttribute(mbeanName, attrName, null, 
 	                    		GMetricType.valueOf(type.toUpperCase()), units,
 	                    		GMetricSlope.valueOf(slope.toUpperCase()), metricName,
-	                    		Integer.parseInt(dMax));
+	                    		parseDMax(dMax));
                     }
                 }
             }
             agent.addSampler(mbSampler);
         }
     }
+
+
+    /**
+     * Parses dMaxString, which is the value of dmax read in from a configuration file.
+     * @param dMaxString value read in from configuration
+     * @return int value of dMaxString if parse is successful, 0 (default value) otherwise
+     */
+    private static int parseDMax(String dMaxString) {
+        int dMax;
+        try {
+            dMax = Integer.parseInt(dMaxString);
+        } catch (NumberFormatException e) {
+            dMax = 0;
+        }
+        return dMax;
+    }
+
     /**
      * Builds the metric name in ganglia
      * @param process the process name, or null if not used
