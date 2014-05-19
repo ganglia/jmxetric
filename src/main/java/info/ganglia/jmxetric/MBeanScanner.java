@@ -2,7 +2,9 @@ package info.ganglia.jmxetric;
 
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -64,7 +66,7 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * Constructs a configuration for each MBean. 
+	 * Constructs a configuration for all MBeans.
 	 * @param mBeanObjects
 	 * @return
 	 */
@@ -111,7 +113,6 @@ public class MBeanScanner {
 				| ReflectionException e) {
 			System.err.println(e.getMessage());
 		}
-	
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class MBeanScanner {
 			Object attr = mBeanServer.getAttribute(mBeanName, attributeInfo.getName());
 			MBeanAttributeConfig config = new MBeanAttributeConfig();
 			config.addField("name", attributeInfo.getName());
-	
+
 			if (attr == null) {
 				return null;
 			} else if (attr instanceof CompositeData) {
@@ -201,22 +202,22 @@ public class MBeanScanner {
 	/**
 	 * Config is a super class that represents a type of configuration that is
 	 * fed into JMXetric.
-	 * 
+	 *
 	 * @author Ng Zhi An
-	 * 
+	 *
 	 */
 	private class Config {
 		String name;
 		boolean hasChildren = false;
-		List<KeyValue> fields = new Vector<KeyValue>();
+		Map<String, String> fields = new HashMap<>();
 		List<Config> children = new Vector<Config>();
 
 		/* Users are not supposed to instantiate this class */
 		private Config() {
 		};
 
-		void addField(String key, String val) {
-			fields.add(new KeyValue(key, val));
+		void addField(String key, String value) {
+			fields.put(key, value);
 		}
 
 		void addChild(Config config) {
@@ -232,8 +233,8 @@ public class MBeanScanner {
 
 		public String fieldsToString() {
 			String result = "";
-			for (KeyValue kv : fields) {
-				result += kv.toString() + " ";
+			for (String key : fields.keySet()) {
+				result += key + "=\"" + fields.get(key) + "\" ";
 			}
 			// remove the trailing whitespace
 			return result.substring(0, result.length() - 1);
@@ -276,20 +277,6 @@ public class MBeanScanner {
 	private class MBeanCompositeConfig extends Config {
 		public MBeanCompositeConfig() {
 			this.name = "composite";
-		}
-	}
-
-	public class KeyValue {
-		public String key;
-		public String val;
-
-		public KeyValue(String key, String val) {
-			this.key = key;
-			this.val = val;
-		}
-
-		public String toString() {
-			return key + "=\"" + val + "\"";
 		}
 	}
 
@@ -384,7 +371,7 @@ public class MBeanScanner {
 			} else {
 				sb.append(">" + NL);
 				sb.append(writeConfigList(config.children, "  " + indent));
-				sb.append(indent + "</" + config.name + ">" + NL);
+				sb.append(indent + "</" + config.name + ">");
 			}
 			return sb.toString();
 		}
