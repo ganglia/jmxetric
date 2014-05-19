@@ -1,5 +1,7 @@
 package info.ganglia.jmxetric;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
@@ -24,39 +26,47 @@ import javax.management.openmbean.CompositeType;
 
 /**
  * A utility class that scans the platform MBeanServer for registered
- * MBeans/MXBeans.
- * The MBeans are queried and represented as private objects
+ * MBeans/MXBeans. The MBeans are queried and represented as private objects
+ * These objects are then written using {@link ConfigWriter} to a
+ * {@link java.io.PrintStream}.
+ * 
  * @see Config
  * @see MBeanConfig
  * @see MBeanAttributeConfig
  * @see MBeanCompositeConfig
- * These objects are then written using @see ConfigWriter to a {@link java.io.PrintStream}.
- * 
- * @author Ng Zhi An
- * 
+ * @see ConfigWriter
  */
 public class MBeanScanner {
-	private MBeanServer mBeanServer = ManagementFactory
+	private static final String ERR_FILE = "%s can not be written to, using System.out instead.\n";
+	/* Platform MBean Server */
+	private final MBeanServer mBeanServer = ManagementFactory
 			.getPlatformMBeanServer();
 
-	/* Data types that represent the MBean configuration */
-
 	/**
-	 * Method that can be called to output a test configuration file to
-	 * System.out
+	 * Used mainly for testing purposed to output a test configuration file to
+	 * System.out. Also shows how to use this class.
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		PrintStream out = System.out;
+		if (args.length > 0) {
+			try {
+				out = new PrintStream(new File(args[0]));
+			} catch (FileNotFoundException e) {
+				System.out.printf(ERR_FILE, args[0]);
+			}
+		}
 		MBeanScanner mBeanScanner = new MBeanScanner();
 		List<Config> configs = mBeanScanner.scan();
 		ConfigWriter cw;
-		cw = new ConfigWriter(System.out, configs);
+		cw = new ConfigWriter(out, configs);
 		cw.write();
 	}
 
 	/**
 	 * Scans the platform MBean server for registered MBeans, creating
+	 * 
 	 * @see Config objects to represent these MBeans.
 	 */
 	public List<Config> scan() {
