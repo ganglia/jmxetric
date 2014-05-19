@@ -67,6 +67,7 @@ public class MBeanScanner {
 
 	/**
 	 * Constructs a configuration for all MBeans.
+	 * 
 	 * @param mBeanObjects
 	 * @return
 	 */
@@ -80,10 +81,12 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * Constructs the configuration for a single MBean.
-	 * The configuration includes the name, e.g. "java.util.loggin:type=Logging",
-	 * and the attributes belonging to that MBean.
-	 * @param objectInstance MBean object instance
+	 * Constructs the configuration for a single MBean. The configuration
+	 * includes the name, e.g. "java.util.loggin:type=Logging", and the
+	 * attributes belonging to that MBean.
+	 * 
+	 * @param objectInstance
+	 *            MBean object instance
 	 * @return configuration representing this MBean
 	 */
 	private Config scanOneMBeanObject(ObjectInstance objectInstance) {
@@ -96,10 +99,15 @@ public class MBeanScanner {
 
 	/**
 	 * Stores all attributes of an MBean into its MBeanConfig object
-	 * @param mBeanConfig the configuration object to store the attributes into
-	 * @param mBeanName the name of the MBean object we are getting the attributes from
+	 * 
+	 * @param mBeanConfig
+	 *            the configuration object to store the attributes into
+	 * @param mBeanName
+	 *            the name of the MBean object we are getting the attributes
+	 *            from
 	 */
-	private void scanMBeanAttributes(MBeanConfig mBeanConfig, ObjectName mBeanName) {
+	private void scanMBeanAttributes(MBeanConfig mBeanConfig,
+			ObjectName mBeanName) {
 		MBeanInfo mBeanInfo;
 		try {
 			mBeanInfo = mBeanServer.getMBeanInfo(mBeanName);
@@ -116,8 +124,9 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * Creates an object to represent a single attribute of an MBean.
-	 * An attribute can be a simple attribute, or made up composites.
+	 * Creates an object to represent a single attribute of an MBean. An
+	 * attribute can be a simple attribute, or made up composites.
+	 * 
 	 * @param mBeanName
 	 * @param attributeInfo
 	 * @return
@@ -126,7 +135,8 @@ public class MBeanScanner {
 			MBeanAttributeInfo attributeInfo) {
 		// type determines if this should be composite
 		try {
-			Object attr = mBeanServer.getAttribute(mBeanName, attributeInfo.getName());
+			Object attr = mBeanServer.getAttribute(mBeanName,
+					attributeInfo.getName());
 			MBeanAttributeConfig config = new MBeanAttributeConfig();
 			config.addField("name", attributeInfo.getName());
 
@@ -135,7 +145,8 @@ public class MBeanScanner {
 			} else if (attr instanceof CompositeData) {
 				addComposites(config, (CompositeData) attr);
 			} else {
-				config.addField("type", translateDataType(attributeInfo.getType()));
+				config.addField("type",
+						translateDataType(attributeInfo.getType()));
 			}
 			return config;
 		} catch (AttributeNotFoundException | InstanceNotFoundException
@@ -146,9 +157,13 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * Adds the composite data of an MBean's attribute to an MBeanAttributeConfig
-	 * @param config configuration which the composite belongs to
-	 * @param compositeData object representing the composite data
+	 * Adds the composite data of an MBean's attribute to an
+	 * MBeanAttributeConfig
+	 * 
+	 * @param config
+	 *            configuration which the composite belongs to
+	 * @param compositeData
+	 *            object representing the composite data
 	 */
 	private void addComposites(MBeanAttributeConfig config,
 			CompositeData compositeData) {
@@ -160,6 +175,7 @@ public class MBeanScanner {
 
 	/**
 	 * Makes a configuration for JMXetric that represents the composite tag
+	 * 
 	 * @param compositeType
 	 * @param name
 	 * @return
@@ -174,11 +190,12 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * The date types returned by JMX calls are no the same as those
-	 * accepted by JMXetric and Ganglia.
-	 * This methods provides the translation.
-	 * e.g. java.lang.Long -> int8
-	 * @param possibleData the data type string returned by Java JMX methods
+	 * The date types returned by JMX calls are no the same as those accepted by
+	 * JMXetric and Ganglia. This methods provides the translation. e.g.
+	 * java.lang.Long -> int8
+	 * 
+	 * @param possibleData
+	 *            the data type string returned by Java JMX methods
 	 * @return a data type string that Ganglia recognizes
 	 */
 	private String translateDataType(String possibleData) {
@@ -199,38 +216,69 @@ public class MBeanScanner {
 		return "string";
 	}
 
+	/* Data types that represent the MBean configuration */
+
 	/**
 	 * Config is a super class that represents a type of configuration that is
 	 * fed into JMXetric.
-	 *
-	 * @author Ng Zhi An
-	 *
 	 */
 	private class Config {
+		/* name of this Config, this is the name of the XML tag */
 		String name;
+		/* used to determine the XML tag will be self-closing */
 		boolean hasChildren = false;
+		/* a map of the parameters in the tag, e.g. delay, name, pname */
 		Map<String, String> fields = new HashMap<>();
+		/* a list of inner/children Config */
 		List<Config> children = new Vector<Config>();
 
 		/* Users are not supposed to instantiate this class */
 		private Config() {
 		};
 
+		/**
+		 * Adds a new field to this Config. This is written as a parameter in
+		 * this XML tag.
+		 * 
+		 * @param key
+		 *            the name of this key, e.g. "delay", "name"
+		 * @param value
+		 *            value of this key, e.g. "0", "60", "java.lang:type=Memory"
+		 */
 		void addField(String key, String value) {
 			fields.put(key, value);
 		}
 
+		/**
+		 * Adds a Config to the list of children this Config has
+		 * 
+		 * @param config
+		 *            child Config to be added to this
+		 */
 		void addChild(Config config) {
-			if (config == null)
-				return;
-			hasChildren = true;
+			if (config == null) {
+				return; // ensure that the children contains no null values
+			}
+			if (hasChildren == false) {
+				hasChildren = true;
+			}
 			children.add(config);
 		}
 
+		/**
+		 * A String representation of this Config, includes the name and the
+		 * fields.
+		 */
+		@Override
 		public String toString() {
 			return name + " " + fieldsToString();
 		}
 
+		/**
+		 * Printable representation of all the fields of this Config
+		 * 
+		 * @return A String with all the fields in this format <key>="<value>"
+		 */
 		public String fieldsToString() {
 			String result = "";
 			for (String key : fields.keySet()) {
@@ -244,9 +292,6 @@ public class MBeanScanner {
 	/**
 	 * Represents a configuration with the name "mbean". This is the "<mbean>"
 	 * tag in the XML configuration file.
-	 * 
-	 * @author Ng Zhi An
-	 * 
 	 */
 	private class MBeanConfig extends Config {
 		public MBeanConfig() {
@@ -257,9 +302,6 @@ public class MBeanScanner {
 	/**
 	 * Represents a configuration with the name "attribute". This is the
 	 * "<attribute>" tag in the XML configuration file.
-	 * 
-	 * @author Ng Zhi An
-	 * 
 	 */
 	private class MBeanAttributeConfig extends Config {
 		public MBeanAttributeConfig() {
@@ -270,9 +312,6 @@ public class MBeanScanner {
 	/**
 	 * Represents a configuration with the name "composite". This is the
 	 * "<composite>" tag in the XML configuration file.
-	 * 
-	 * @author Ng Zhi An
-	 * 
 	 */
 	private class MBeanCompositeConfig extends Config {
 		public MBeanCompositeConfig() {
@@ -281,25 +320,19 @@ public class MBeanScanner {
 	}
 
 	/**
-	 * Writes the configuration to a {@link java.io.PrintStream}.
-	 * The output is in the XML format, which is what JMXetric reads in.
-	 * @author ng
-	 *
+	 * Writes the configuration to a {@link java.io.PrintStream}. The output is
+	 * in the XML format, which is what JMXetric reads in.
 	 */
 	private static class ConfigWriter {
-		/**
-		 * The output stream that the configuration will be written to.
-		 */
-		private PrintStream out;
-		/**
-		 * The list of configurations to be written.
-		 */
-		private List<Config> configs;
-		/**
-		 * System-specific new-line separator.
-		 */
+		/* The output stream that the configuration will be written to. */
+		private final PrintStream out;
+		/* The list of configurations to be written. */
+		private final List<Config> configs;
+		/* System-specific new-line separator. */
 		private static final String NL = System.lineSeparator();
+		/* XML Declaration used by JMXetric */
 		private static final String XML_DECL = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>";
+		/* XML Doctype used by JMXetric */
 		private static final String XML_DOCTYPE = "<!DOCTYPE jmxetric-config ["
 				+ NL + "  <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>"
 				+ NL + "  <!ELEMENT sample (mbean)*>" + NL
@@ -337,6 +370,9 @@ public class MBeanScanner {
 			this.configs = config;
 		}
 
+		/**
+		 * Write the configuration out to the PrintStream out.
+		 */
 		public void write() {
 			if (configs == null)
 				return;
@@ -346,22 +382,42 @@ public class MBeanScanner {
 			sb.append("<jmxetric-config>" + NL);
 			sb.append("  <jvm process=\"ProcessName\"/>" + NL);
 			sb.append("  <sample initialdelay=\"20\" delay=\"60\">" + NL);
-			String output = writeConfigList(configs, "    ");
+			String output = buildXmlTagsFromList(configs, "    ");
 			sb.append(output);
 			sb.append("  </sample>" + NL);
 			sb.append("</jmxetric-config>" + NL);
 			out.print(sb.toString());
 		}
 
-		public String writeConfigList(List<Config> list, String indent) {
+		/**
+		 * Builds a String of XML tags out of a list of Config. Each Config is
+		 * built by {@link buildConfig} and the result is interspersed with new
+		 * lines for readability.
+		 * 
+		 * @param configs
+		 *            list of Config to be converted to XML tags
+		 * @param indent
+		 *            string that is prefixed to each XML tag
+		 * @return string of XML tags for list
+		 */
+		public String buildXmlTagsFromList(List<Config> configs, String indent) {
 			StringBuilder sb = new StringBuilder();
-			for (Config config : list) {
-				sb.append(writeConfig(config, indent) + NL);
+			for (Config config : configs) {
+				sb.append(buildXmlTag(config, indent) + NL);
 			}
 			return sb.toString();
 		}
 
-		private String writeConfig(Config config, String indent) {
+		/**
+		 * Builds a XML tag for config. The tag with have indent prefixed.
+		 * 
+		 * @param config
+		 *            to be converted to an XML tag
+		 * @param indent
+		 *            indentation string that is prefixed to the tag
+		 * @return XML tag for this config
+		 */
+		private String buildXmlTag(Config config, String indent) {
 			StringBuffer sb = new StringBuffer();
 			sb.append(indent + "<" + config.name + " "
 					+ config.fieldsToString());
@@ -370,7 +426,7 @@ public class MBeanScanner {
 				sb.append("/>");
 			} else {
 				sb.append(">" + NL);
-				sb.append(writeConfigList(config.children, "  " + indent));
+				sb.append(buildXmlTagsFromList(config.children, "  " + indent));
 				sb.append(indent + "</" + config.name + ">");
 			}
 			return sb.toString();
