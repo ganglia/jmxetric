@@ -28,13 +28,15 @@ Installation
 Demo / Quickstart
 
     1) Ensure you have a gmond running on localhost:8649
-    2) Download jmxetric-1.0.4.jar, gmetric4j-1.0.3.jar and oncrpc-1.0.7.jar
-       all into the same directory.
-    3) cd into the directory
-    2) In bash do:
+    2) git clone https://github.com/ganglia/jmxetric.git
+    3) Download jmxetric-1.0.4.jar, gmetric4j-1.0.3.jar and oncrpc-1.0.7.jar
+       into the directory where jmxetric was cloned
+    3) cd jmxetric
+    4) In bash do:
         $ export config="host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric.xml"
         $ java  -Djava.util.logging.config.file=etc/logging.properties \
-            -javaagent:jmxetric-1.0.4.jar=$config jmxetric.JMXetricAgent
+        	-cp gmetric4j-1.0.3.jar:oncrpc-1.0.7.jar:jmxetric-1.0.4.jar \
+            -javaagent:jmxetric-1.0.4.jar=$config info.ganglia.jmxetric.JMXetricAgent
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
