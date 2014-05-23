@@ -25,8 +25,11 @@ public class XMLConfigurationService {
 
     private final static XPath xpath = XPathFactory.newInstance().newXPath();
     
+    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_PORT = "8649";
     private static final String DEFAULT_CONFIG="jmxetric.xml";
     private static final String DEFAULT_MODE="multicast";
+    private static final String DEFAULT_USE_WIREFORMAT31 = "false";
     
     /**
      * Configures the JMXetricAgent based on the supplied agent args
@@ -45,11 +48,11 @@ public class XMLConfigurationService {
         
         if ( agentArgs != null ) {
             String[] args = agentArgs.split(",");
-            host = getTagValue( "host", args, null );
-            port = getTagValue( "port", args, null );
-            config = getTagValue( "config", args, DEFAULT_CONFIG );
-            mode = getTagValue( "mode", args, null );
-            wireformat = getTagValue( "wireformat31x", args, null);
+            host = getTagValue("host", args, DEFAULT_HOST);
+            port = getTagValue("port", args, DEFAULT_PORT);
+            config = getTagValue("config", args, DEFAULT_CONFIG);
+            mode = getTagValue( "mode", args, DEFAULT_MODE);
+            wireformat = getTagValue( "wireformat31x", args, DEFAULT_USE_WIREFORMAT31);
             processName = getTagValue( "process", args, null );
             spoof = getTagValue( "spoof", args, null );
         }
