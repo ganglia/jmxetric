@@ -32,9 +32,9 @@ public class XMLConfigurationService {
     private static final String DEFAULT_USE_WIREFORMAT31 = "false";
     
     /**
-     * Configures the JMXetricAgent based on the supplied agent args
+     * Configures the JMXetricAgent based on the supplied agentArgs
      * @param agent the agent to configure
-     * @param agentArgs the agent arg list
+     * @param agentArgs the agent arguments list
      * @throws java.lang.Exception
      */
     public static void configure(JMXetricAgent agent, String agentArgs) throws Exception {
