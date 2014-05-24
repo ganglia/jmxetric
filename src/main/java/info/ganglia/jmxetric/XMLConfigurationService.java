@@ -6,12 +6,20 @@ import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
 
+
+
+
+
+import java.io.IOException;
 //import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -128,12 +136,15 @@ public class XMLConfigurationService {
      * @param cmdLineMode the mode found on the agent arg list
      * @param v31x true if the ganglia v31x wire format should be used
      * @param cmdLineSpoof the spoof value found on the agent arg list
+     * @throws IOException
+     * @throws XPathExpressionException
      * @throws java.lang.Exception
      */
     private static void configureGangliaFromXML(JMXetricAgent agent, 
             InputSource inputSource, String cmdLineHost, 
             String cmdLinePort, String cmdLineMode, String cmdLinev31x, String cmdLineSpoof)
-                    throws Exception {
+            		throws XPathExpressionException, IOException
+                    {
         // Gets the config for ganglia
         // Note that the ganglia config needs to be found before the samplers 
         // are created.
