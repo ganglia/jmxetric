@@ -2,13 +2,9 @@ package info.ganglia.jmxetric;
 
 
 import info.ganglia.gmetric4j.gmetric.GMetric;
+import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
-import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
-
-
-
-
 
 import java.io.IOException;
 //import java.util.logging.Logger;
@@ -111,9 +107,9 @@ public class XMLConfigurationService {
     	return selectParameterFromNode( (String)null, ganglia, attributeName, defaultValue);
     }
 
-    private static String selectParameterFromNode( String cmdLine, 
+    private static String selectParameterFromNode(String cmdLine, 
     		Node ganglia, String attributeName, 
-    		String defaultValue ) {
+    		String defaultValue) {
     	String ret = defaultValue ;
     	if ( cmdLine != null )
     		ret = cmdLine ;
@@ -148,37 +144,43 @@ public class XMLConfigurationService {
         // Gets the config for ganglia
         // Note that the ganglia config needs to be found before the samplers 
         // are created.
-        //
+        GMetric gmetric = makeGMetricFromXml(inputSource, cmdLineHost, cmdLinePort, cmdLineMode, cmdLinev31x, cmdLineSpoof);
+        agent.setGmetric(gmetric);
+    }
+    
+    private static GMetric makeGMetricFromXml(InputSource inputSource, String cmdLineHost,
+            String cmdLinePort, String cmdLineMode, String cmdLinev31x, String cmdLineSpoof)
+            		throws XPathExpressionException, IOException {
         String gangliaExpr = "/jmxetric-config/ganglia";
         Node g = (Node) xpath.evaluate(gangliaExpr, inputSource,
                 XPathConstants.NODE);
-        String hostname = selectParameterFromNode( cmdLineHost, 
+        String hostname = selectParameterFromNode(cmdLineHost,
         		g, "hostname", "localhost");
-        String port = selectParameterFromNode( cmdLinePort, 
+        String port = selectParameterFromNode(cmdLinePort,
         		g, "port", "8649");
         int iport = Integer.parseInt(port);
-        String mode = selectParameterFromNode( cmdLineMode,
+        String mode = selectParameterFromNode(cmdLineMode,
         		g, "mode",DEFAULT_MODE);
         UDPAddressingMode addressingMode = UDPAddressingMode.MULTICAST;
-        if ( mode.toLowerCase().equals("unicast")) {
+        if (mode.toLowerCase().equals("unicast")) {
         	addressingMode = UDPAddressingMode.UNICAST;
         }
-        String stringv31x = selectParameterFromNode( cmdLinev31x, 
+        String stringv31x = selectParameterFromNode(cmdLinev31x,
         		g, "wireformat31x", "false");
-        boolean v31x = Boolean.parseBoolean(stringv31x) ;
-        String spoof = selectParameterFromNode( cmdLineSpoof, 
+        boolean v31x = Boolean.parseBoolean(stringv31x);
+        String spoof = selectParameterFromNode(cmdLineSpoof,
                 g, "spoof", null);
         
-        StringBuilder buf = new StringBuilder() ;
-        buf.append("GMetric host=").append( hostname );
-        buf.append(" port=").append( port );
-        buf.append(" mode=").append( mode );
-        buf.append(" v31x=").append( v31x );
-        buf.append(" spoof=").append( spoof );
+        StringBuilder buf = new StringBuilder();
+        buf.append("GMetric host=").append(hostname);
+        buf.append(" port=").append(port);
+        buf.append(" mode=").append(mode);
+        buf.append(" v31x=").append(v31x);
+        buf.append(" spoof=").append(spoof);
         // log.fine(buf.toString());
-        GMetric gmetric = new GMetric(hostname, iport, addressingMode, DEFAULT_TTL, v31x, null, spoof );
-        agent.setGmetric(gmetric);
+        return new GMetric(hostname, iport, addressingMode, DEFAULT_TTL, v31x, null, spoof);
     }
+
     /**
      * Creates managed attributed on the JMXetricAgent from the XML config
      * @param agent the agent to configure
