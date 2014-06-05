@@ -42,21 +42,21 @@ public class XMLConfigurationService {
      * @throws java.lang.Exception
      */
     public static void configure(JMXetricAgent agent, String agentArgs) throws Exception {
-        String host = null ;
-        String port = null ;
-        String mode = null ;
-        String config = DEFAULT_CONFIG ;
-        String wireformat = null ;
-        String processName = null ;
-        String spoof = null;
+    	String host = null,
+    		   port = null,
+    		   mode = null,
+    		   config = DEFAULT_CONFIG,
+    		   wireformat = null,
+    		   processName = null,
+    		   spoof = null;
         
-        if ( agentArgs != null ) {
+        if (agentArgs != null) {
             String[] args = agentArgs.split(",");
-            host = getTagValue("host", args, DEFAULT_HOST);
-            port = getTagValue("port", args, DEFAULT_PORT);
+            host = getTagValue("host", args, null);
+            port = getTagValue("port", args, null);
             config = getTagValue("config", args, DEFAULT_CONFIG);
-            mode = getTagValue( "mode", args, DEFAULT_MODE);
-            wireformat = getTagValue( "wireformat31x", args, DEFAULT_USE_WIREFORMAT31);
+            mode = getTagValue( "mode", args, null);
+            wireformat = getTagValue( "wireformat31x", args, null);
             processName = getTagValue( "process", args, null );
             spoof = getTagValue( "spoof", args, null );
         }
@@ -155,9 +155,9 @@ public class XMLConfigurationService {
         Node g = (Node) xpath.evaluate(gangliaExpr, inputSource,
                 XPathConstants.NODE);
         String hostname = selectParameterFromNode(cmdLineHost,
-        		g, "hostname", "localhost");
+        		g, "hostname", DEFAULT_HOST);
         String port = selectParameterFromNode(cmdLinePort,
-        		g, "port", "8649");
+        		g, "port", DEFAULT_PORT);
         int iport = Integer.parseInt(port);
         String mode = selectParameterFromNode(cmdLineMode,
         		g, "mode",DEFAULT_MODE);
@@ -166,7 +166,7 @@ public class XMLConfigurationService {
         	addressingMode = UDPAddressingMode.UNICAST;
         }
         String stringv31x = selectParameterFromNode(cmdLinev31x,
-        		g, "wireformat31x", "false");
+        		g, "wireformat31x", DEFAULT_USE_WIREFORMAT31);
         boolean v31x = Boolean.parseBoolean(stringv31x);
         String spoof = selectParameterFromNode(cmdLineSpoof,
                 g, "spoof", null);
