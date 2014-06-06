@@ -127,8 +127,11 @@ public class MBeanScanner {
 						mBeanName, infos[i]);
 				mBeanConfig.addChild(cMBAttr);
 			}
-		} catch (IntrospectionException | InstanceNotFoundException
-				| ReflectionException e) {
+		} catch (IntrospectionException e) {
+			System.err.println(e.getMessage());
+		} catch (InstanceNotFoundException e) {
+			System.err.println(e.getMessage());
+		} catch (ReflectionException e) {
 			System.err.println(e.getMessage());
 		}
 	}
