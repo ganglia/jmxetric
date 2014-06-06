@@ -42,38 +42,21 @@ public class XMLConfigurationService {
      * @throws java.lang.Exception
      */
     public static void configure(JMXetricAgent agent, String agentArgs) throws Exception {
-    	String host = null,
-    		   port = null,
-    		   mode = null,
-    		   config = DEFAULT_CONFIG,
-    		   wireformat = null,
-    		   processName = null,
-    		   spoof = null;
-        
-        if (agentArgs != null) {
-            String[] args = agentArgs.split(",");
-            host = getTagValue("host", args, null);
-            port = getTagValue("port", args, null);
-            config = getTagValue("config", args, DEFAULT_CONFIG);
-            mode = getTagValue( "mode", args, null);
-            wireformat = getTagValue( "wireformat31x", args, null);
-            processName = getTagValue( "process", args, null );
-            spoof = getTagValue( "spoof", args, null );
-        }
+    	CommandLineArgs args = new CommandLineArgs(agentArgs);
 
-        // log.config("Command line argument found: host=" + host );
-        // log.config("Command line args: port=" + port );
-        // log.config("Command line args: config=" + config );
-        // log.config("Command line args: mode=" + mode );
-        // log.config("Command line args: wireformat31x=" + wireformat );
-        // log.config("Command line args: process=" + processName );
-        // log.config("Command line args: spoof=" + spoof );
-        
-        InputSource inputSource = new InputSource(config);
+    	// log.config("Command line argument found: host=" + args.getHost());
+    	// log.config("Command line args: port=" + args.getPort());
+    	// log.config("Command line args: config=" + args.getConfig());
+    	// log.config("Command line args: mode=" + args.getMode());
+    	// log.config("Command line args: wireformat31x=" + args.getWireformat());
+    	// log.config("Command line args: process=" + args.getProcessName());
+    	// log.config("Command line args: spoof=" + args.getSpoof());
 
-        configureGangliaFromXML( agent, inputSource, host, port, mode, 
-            wireformat, spoof );
-        configureJMXetricFromXML( agent, inputSource, config, processName );
+    	InputSource inputSource = new InputSource(args.getConfig());
+
+    	configureGangliaFromXML(agent, inputSource, args.getHost(), args.getPort(), args.getMode(), 
+    			args.getWireformat(), args.getSpoof());
+    	configureJMXetricFromXML(agent, inputSource, args.getConfig(), args.getProcessName());
     }
 
     private final static Pattern argPattern = Pattern.compile( "(\\S+?)\\=(\\S*)" );
