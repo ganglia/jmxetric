@@ -27,18 +27,12 @@ import javax.management.openmbean.CompositeType;
 /**
  * A utility class that scans the platform MBeanServer for registered
  * MBeans/MXBeans. The MBeans are queried and represented as private objects
- * These objects are then written using {@link ConfigWriter} to a
+ * These objects are then written using ConfigWriter to a
  * {@link java.io.PrintStream}.
  * 
- * @see Config
- * @see MBeanConfig
- * @see MBeanAttributeConfig
- * @see MBeanCompositeConfig
- * @see ConfigWriter
  */
 public class MBeanScanner {
 	private static final String ERR_FILE = "%s can not be written to, using System.out instead.\n";
-	/* Platform MBean Server */
 	private final MBeanServer mBeanServer = ManagementFactory
 			.getPlatformMBeanServer();
 
@@ -66,8 +60,7 @@ public class MBeanScanner {
 
 	/**
 	 * Scans the platform MBean server for registered MBeans, creating
-	 * 
-	 * @see Config objects to represent these MBeans.
+	 * see Config objects to represent these MBeans.
 	 */
 	public List<Config> scan() {
 		Set<ObjectInstance> mBeanObjects = mBeanServer.queryMBeans(null, null);
@@ -79,7 +72,7 @@ public class MBeanScanner {
 	 * Constructs a configuration for all MBeans.
 	 * 
 	 * @param mBeanObjects
-	 * @return
+	 * @return a list of Config for the MBeans
 	 */
 	private List<Config> getConfigForAllMBeans(Set<ObjectInstance> mBeanObjects) {
 		List<Config> configs = new Vector<Config>();
@@ -142,7 +135,7 @@ public class MBeanScanner {
 	 * 
 	 * @param mBeanName
 	 * @param attributeInfo
-	 * @return
+	 * @return an AttributeConfig for this MBean
 	 */
 	private MBeanAttributeConfig makeConfigMBeanAttribute(ObjectName mBeanName,
 			MBeanAttributeInfo attributeInfo) {
@@ -191,7 +184,7 @@ public class MBeanScanner {
 	 * 
 	 * @param compositeType
 	 * @param name
-	 * @return
+	 * @return a CompositeConfig for a composite MBean
 	 */
 	private MBeanCompositeConfig makeComposite(CompositeType compositeType,
 			String name) {
