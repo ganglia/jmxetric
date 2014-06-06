@@ -140,8 +140,9 @@ public class MBeanScanner {
 	private MBeanAttributeConfig makeConfigMBeanAttribute(ObjectName mBeanName,
 			MBeanAttributeInfo attributeInfo) {
 		// type determines if this should be composite
+		Object attr;
 		try {
-			Object attr = mBeanServer.getAttribute(mBeanName,
+			attr = mBeanServer.getAttribute(mBeanName,
 					attributeInfo.getName());
 			MBeanAttributeConfig config = new MBeanAttributeConfig();
 			config.addField("name", attributeInfo.getName());
@@ -155,8 +156,13 @@ public class MBeanScanner {
 						translateDataType(attributeInfo.getType()));
 			}
 			return config;
-		} catch (AttributeNotFoundException | InstanceNotFoundException
-				| MBeanException | ReflectionException | RuntimeMBeanException e) {
+		} catch (AttributeNotFoundException e) {
+			System.err.println(e.getMessage());
+		} catch (InstanceNotFoundException e) {
+			System.err.println(e.getMessage());
+		} catch (MBeanException e) {
+			System.err.println(e.getMessage());
+		} catch (ReflectionException e) {
 			System.err.println(e.getMessage());
 		}
 		return null;
@@ -234,7 +240,7 @@ public class MBeanScanner {
 		/* used to determine the XML tag will be self-closing */
 		boolean hasChildren = false;
 		/* a map of the parameters in the tag, e.g. delay, name, pname */
-		Map<String, String> fields = new HashMap<>();
+		Map<String, String> fields = new HashMap<String, String>();
 		/* a list of inner/children Config */
 		List<Config> children = new Vector<Config>();
 
