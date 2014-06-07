@@ -161,7 +161,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 		log.finer("Mbean is " + mBeanName);
 
 		NodeList attrs = getXmlNodeSet("attribute", mBean);
-		List<MBeanAttribute> attributes = new Vector<>();
+		List<MBeanAttribute> attributes = new Vector<MBeanAttribute>();
 
 		for (int i = 0; i < attrs.getLength(); i++) {
 			Node attr = attrs.item(i);
@@ -226,7 +226,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 	private List<MBeanAttribute> makeCompositeAttributes(Node attr,
 			String mBeanName, String mBeanPublishName, String mBeanDMax)
 			throws XPathExpressionException {
-		List<MBeanAttribute> mbas = new Vector<>();
+		List<MBeanAttribute> mbas = new Vector<MBeanAttribute>();
 		MBeanAttribute mba = null;
 		NodeList composites = getXmlNodeSet("composite", attr);
 		String name = selectParameterFromNode(attr, "name", "NULL");
