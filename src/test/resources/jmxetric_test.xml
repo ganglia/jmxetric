@@ -79,5 +79,6 @@
         </mbean>
                              
 	</sample>
+	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
 </jmxetric-config>
 
