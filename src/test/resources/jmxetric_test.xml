@@ -64,7 +64,12 @@
 			</attribute>
 		</mbean>
 		
-		<mbean name="java.lang:type=Threading" pname="Threading" >
+		<mbean name="*:type=Threading" pname="Threading" >
+			<attribute name="ThreadCount" type="int16" />
+			<attribute name="DaemonThreadCount" type="int16" />
+		</mbean>
+
+		<mbean name="*:*" pname="Threading" >
 			<attribute name="ThreadCount" type="int16" />
 			<attribute name="DaemonThreadCount" type="int16" />
 		</mbean>
