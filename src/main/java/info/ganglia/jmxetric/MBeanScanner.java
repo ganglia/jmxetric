@@ -341,7 +341,7 @@ public class MBeanScanner {
 		/* The list of configurations to be written. */
 		private final List<Config> configs;
 		/* System-specific new-line separator. */
-		private static final String NL = System.lineSeparator();
+		private static final String NL = System.getProperty("line.separator");
 		/* XML Declaration used by JMXetric */
 		private static final String XML_DECL = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>";
 		/* XML Doctype used by JMXetric */
