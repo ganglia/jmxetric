@@ -156,6 +156,8 @@ public class MBeanScanner {
 						translateDataType(attributeInfo.getType()));
 			}
 			return config;
+		} catch (RuntimeMBeanException e) {
+			System.err.println(e.getMessage());
 		} catch (AttributeNotFoundException e) {
 			System.err.println(e.getMessage());
 		} catch (InstanceNotFoundException e) {
