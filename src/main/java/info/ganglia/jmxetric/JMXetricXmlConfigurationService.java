@@ -113,9 +113,16 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
     MBeanSampler mBeanSampler = new MBeanSampler(initialDelay, delay,
         processName);
 
-    NodeList mBeans = getXmlNodeSet("mbean", sample);
-    for (int j = 0; j < mBeans.getLength(); j++) {
-      Node mBean = mBeans.item(j);
+    NodeList mBeanNodes = getXmlNodeSet("mbean", sample);
+    addMBeansToSampler(mBeanNodes, mBeanSampler, sampleDMax);
+
+    return mBeanSampler;
+  }
+
+  private void addMBeansToSampler(NodeList mBeanNodes,
+      MBeanSampler mBeanSampler, String sampleDMax) throws Exception {
+    for (int j = 0; j < mBeanNodes.getLength(); j++) {
+      Node mBean = mBeanNodes.item(j);
       String _mBeanName = selectParameterFromNode(mBean, "name", null);
       Set<ObjectName> mbeanNames = expandMBeanName(_mBeanName);
       if (mbeanNames == null) {
@@ -124,33 +131,14 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
       for (ObjectName objectName : mbeanNames) {
         String mBeanName = objectName.getCanonicalName();
 
-        List<MBeanAttribute> attributes = getAttributesForMBean(mBean,
-            sampleDMax);
+        List<MBeanAttribute> attributes = getAttributesForMBean(mBeanName,
+            mBean, sampleDMax);
         for (MBeanAttribute mBeanAttribute : attributes) {
           addMBeanAttributeToSampler(mBeanSampler, mBeanName, mBeanAttribute);
         }
 
       }
     }
-    return mBeanSampler;
-  }
-
-  /**
-   * Adds a MBeanAttribute to an MBeanSampler. This also checks if the
-   * MBeanAttribute to be added already has a MBeanSampler set, if not it will
-   * set it.
-   * 
-   * @param mBeanSampler
-   * @param mBeanName
-   * @param mBeanAttribute
-   * @throws Exception
-   */
-  private void addMBeanAttributeToSampler(MBeanSampler mBeanSampler,
-      String mBeanName, MBeanAttribute mBeanAttribute) throws Exception {
-    if (mBeanAttribute.getSampler() == null) {
-      mBeanAttribute.setSampler(mBeanSampler);
-    }
-    mBeanSampler.addMBeanAttribute(mBeanName, mBeanAttribute);
   }
 
   /**
@@ -164,10 +152,13 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
    * @return a list of attributes associated to the mbean
    * @throws Exception
    */
-  List<MBeanAttribute> getAttributesForMBean(Node mBean, String sampleDMax)
-      throws Exception {
+  List<MBeanAttribute> getAttributesForMBean(String mBeanQueriedName,
+      Node mBean, String sampleDMax) throws Exception {
     String mBeanName = selectParameterFromNode(mBean, "name", null);
-    String mBeanPublishName = selectParameterFromNode(mBean, "pname", "");
+
+    String mBeanPublishName = buildPname(mBeanQueriedName, mBeanName,
+        selectParameterFromNode(mBean, "pname", ""));
+
     String mBeanDMax = selectParameterFromNode(mBean, "dmax", sampleDMax);
     log.finer("Mbean is " + mBeanName);
 
@@ -185,6 +176,30 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
       }
     }
     return attributes;
+  }
+
+  /**
+   * Builds a unique pname for an mbean based on its fully qualified mbean,
+   * retrieved from the MBean server, the name given in the config, and it's
+   * pname from the config.
+   * 
+   * @param mBeanQueriedName
+   * @param mBeanName
+   * @param mBeanPublishName
+   * @return
+   */
+  static String buildPname(String mBeanQueriedName, String mBeanName,
+      String mBeanPublishName) {
+    int indexOfWildcard = mBeanName.indexOf('*');
+    if (mBeanQueriedName.isEmpty() || indexOfWildcard == -1) {
+      return mBeanPublishName;
+    }
+    int endIndex = mBeanQueriedName.length()
+        - (mBeanName.length() - mBeanName.indexOf('*') - 1);
+
+    String fullPName = mBeanPublishName.concat(mBeanQueriedName.substring(
+        indexOfWildcard, endIndex));
+    return fullPName;
   }
 
   /**
@@ -346,12 +361,29 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
     MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
     try {
       Set<ObjectName> names = mbs.queryNames(new ObjectName(mbeanName), null);
-      System.out.println(names.size());
       return names;
     } catch (MalformedObjectNameException e) {
       log.info("MBean name given in XML is malformed: " + mbeanName);
     }
     return null;
+  }
+
+  /**
+   * Adds a MBeanAttribute to an MBeanSampler. This also checks if the
+   * MBeanAttribute to be added already has a MBeanSampler set, if not it will
+   * set it.
+   * 
+   * @param mBeanSampler
+   * @param mBeanName
+   * @param mBeanAttribute
+   * @throws Exception
+   */
+  private void addMBeanAttributeToSampler(MBeanSampler mBeanSampler,
+      String mBeanName, MBeanAttribute mBeanAttribute) throws Exception {
+    if (mBeanAttribute.getSampler() == null) {
+      mBeanAttribute.setSampler(mBeanSampler);
+    }
+    mBeanSampler.addMBeanAttribute(mBeanName, mBeanAttribute);
   }
 
 }

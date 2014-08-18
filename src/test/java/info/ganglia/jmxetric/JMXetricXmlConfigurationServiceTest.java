@@ -54,7 +54,7 @@ public class JMXetricXmlConfigurationServiceTest {
   }
 
   private void testMBeanWithBothKinds(Node mBeanWithBoth) throws Exception {
-    List<MBeanAttribute> attributes = jmxetric.getAttributesForMBean(
+    List<MBeanAttribute> attributes = jmxetric.getAttributesForMBean("",
         mBeanWithBoth, "1");
 
     assertEquals(9, attributes.size());
@@ -82,7 +82,7 @@ public class JMXetricXmlConfigurationServiceTest {
 
   private void testMBeanWithSimpleAttributes(Node mBeanWithSimpleAttributes)
       throws XPathExpressionException, Exception {
-    List<MBeanAttribute> mbas = jmxetric.getAttributesForMBean(
+    List<MBeanAttribute> mbas = jmxetric.getAttributesForMBean("",
         mBeanWithSimpleAttributes, "");
 
     assertEquals(2, mbas.size());
@@ -95,7 +95,7 @@ public class JMXetricXmlConfigurationServiceTest {
   private void testMBeanWithCompositeAttributes(
       Node mBeanWithCompositeAttributes) throws XPathExpressionException,
       Exception {
-    List<MBeanAttribute> mbas = jmxetric.getAttributesForMBean(
+    List<MBeanAttribute> mbas = jmxetric.getAttributesForMBean("",
         mBeanWithCompositeAttributes, "");
     assertEquals(8, mbas.size());
 
@@ -113,5 +113,17 @@ public class JMXetricXmlConfigurationServiceTest {
 
     assertAttribute(mbas.get(3), "HeapMemoryUsage", "HeapMemoryUsage.max", 0,
         GMetricType.INT32, "bytes");
+  }
+
+  @Test
+  public void testBuildPName() {
+    assertEquals("pname_b",
+        JMXetricXmlConfigurationService.buildPname("a.b.c", "a.*.c", "pname_"));
+    assertEquals("pname_b.c",
+        JMXetricXmlConfigurationService.buildPname("a.b.c", "a.*", "pname_"));
+    assertEquals("pname_b.c", JMXetricXmlConfigurationService.buildPname(
+        "a.b.c.d", "a.*.d", "pname_"));
+    assertEquals("pname_",
+        JMXetricXmlConfigurationService.buildPname("a.b.c", "a.b.c", "pname_"));
   }
 }
