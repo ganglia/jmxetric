@@ -53,6 +53,9 @@
 		</mbean>
 		<mbean name="java.lang:type=OperatingSystem" pname="OS" >
 			<attribute name="ProcessCpuTime" type="int32" slope="positive"/>
+			<!-- File descriptors can only be monitored on UNIX/Linux JVMs, not Windows -->
+			<!-- <attribute name="OpenFileDescriptorCount" type="int32" units="bytes"/>
+			<attribute name="MaxFileDescriptorCount" type="int32" units="bytes"/> -->
 		</mbean>
 
 		<!-- This is a sample configuration for a Tomcat server (AJP port) -->
