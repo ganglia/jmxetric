@@ -75,6 +75,12 @@
 			<attribute name="MessageCount" type="int32" slope="both"/>
 			<attribute name="ConsumerCount" type="int32" slope="both"/>
 		</mbean> -->
+
+                <!-- This is a sample configuration for an Apache ActiveMQ server (message queue named customer.orders) -->
+                <!-- <mbean name='org.apache.activemq:BrokerName=localhost,Type=Queue,Destination=customer.orders' pname="queue_customer_orders">
+                        <attribute name="QueueSize" type="int32" slope="both"/>
+                        <attribute name="ConsumerCount" type="int32" slope="both"/>
+                </mbean> -->
 	</sample>
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
 </jmxetric-config>
