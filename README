@@ -62,7 +62,7 @@ Configuration
                   (so that metrics from different JVMs on the same host can be 
                   determined)
 
-    XML Configuation File
+    XML Configuration File
 
     JMXetric schedules a number of "samples", that queries a list of "mbeans", 
     that have "attributes".  
