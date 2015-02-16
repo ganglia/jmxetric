@@ -35,7 +35,6 @@
   </developers>
   <properties>
     <gmetric4j.version>1.0.7</gmetric4j.version>
-    <oncrpc.version>1.0.7</oncrpc.version>
   </properties>
   <dependencies>
     <dependency>
@@ -57,11 +56,6 @@
       <version>4.1</version>
       <type>jar</type>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.acplt</groupId>
-      <artifactId>oncrpc</artifactId>
-      <version>${oncrpc.version}</version>
     </dependency>
   </dependencies>
   <parent>
