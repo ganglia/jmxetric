@@ -2,9 +2,7 @@ Name
     jmxetric - jvm instrumentation to ganglia
 
 Version
-    jmxetric 1.0.7
-
-    The latest version of this software and document will always be found at 
+    The latest version of this software and document will be found at
     https://github.com/ganglia/jmxetric
 
 Synopsis
@@ -26,19 +24,19 @@ Installation
     java -javaagent:<path>/jmxetric.jar=host="",port="",config="",process="" usual.java.main.class
 
 Demo / Quickstart
-    This example works for version 1.0.6 of jmxetric and gmetric4j.
+    Check the matching version of gmetric4j.jar in the pom.xml
     1) Ensure you have a gmond running on localhost:8649
         $ pgrep gmond # should return a valid PID
         $ nc localhost 8649 # dumps some XML to stdout
     2) $ git clone https://github.com/ganglia/jmxetric.git
-    3) Download jmxetric.jar, gmetric4j.jar and oncrpc-1.0.7.jar
+    3) Download jmxetric.jar, gmetric4j.jar and oncrpc.jar
        all into the same directory.
     4) $ cd jmxetric
     5) In bash do:
         $ export config="host=localhost,port=8649,wireformat31x=true,config=etc/jmxetric.xml"
         $ java  -Djava.util.logging.config.file=etc/logging.properties \
-            -cp gmetric4j-1.0.6.jar:oncrpc-1.0.7.jar:jmxetric-1.0.6.jar \
-            -javaagent:jmxetric-1.0.4.jar=$config info.ganglia.jmxetric.JMXetricAgent
+            -cp gmetric4j.jar:oncrpc.jar:jmxetric.jar \
+            -javaagent:jmxetric.jar=$config info.ganglia.jmxetric.JMXetricAgent
 
 Configuration
     The configuration of JMXetric is loaded from an xml file in the working
@@ -146,8 +144,6 @@ Support/Queries
     If you are using this at all, then I'd love to know!
 
 Copyright
-      Copyright (C) 2008-2011 Jasper Humphrey
-      Copyright (C) 2011-2013 Daniel Pocock http://danielpocock.com
+      Copyright (C) 2008-2011 Jasper Humphrey, jasper521@gmail.com
+      Copyright (C) 2011-2015 Daniel Pocock, http://danielpocock.com
 
-Authors
-     Jasper Humphrey      jasper521 at gmail     Developer    
