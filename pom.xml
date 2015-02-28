@@ -34,7 +34,7 @@
     </developer>
   </developers>
   <properties>
-    <gmetric4j.version>1.0.8</gmetric4j.version>
+    <gmetric4j.version>1.0.10</gmetric4j.version>
   </properties>
   <dependencies>
     <dependency>
