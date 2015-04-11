@@ -3,8 +3,12 @@ package info.ganglia.jmxetric;
 import static org.junit.Assert.*;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -12,25 +16,32 @@ import javax.xml.xpath.XPathFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class JMXetricXmlConfigurationServiceTest {
 	private JMXetricXmlConfigurationService jmxetric;
-	private InputSource inputSource = new InputSource(
-			"src/test/resources/jmxetric_test.xml");
 	private XPath xpath = XPathFactory.newInstance().newXPath();
+	private Document document;
+
 	@Before
-	public void setUp() {
-		jmxetric = new JMXetricXmlConfigurationService(null, inputSource,
+	public void setUp() throws ParserConfigurationException, IOException, SAXException {
+		InputSource inputSource = new InputSource(
+				"src/test/resources/jmxetric_test.xml");
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		document = db.parse(inputSource);
+		jmxetric = new JMXetricXmlConfigurationService(null, document,
 				"TestProcessName");
 	}
 
 	@Test
 	public void testAll() throws XPathExpressionException {
 		NodeList samples = (NodeList) xpath.evaluate("/jmxetric-config/sample",
-				inputSource, XPathConstants.NODESET);
+				document, XPathConstants.NODESET);
 		Node firstSample = samples.item(0);
 		Node secondSample = samples.item(1);
 

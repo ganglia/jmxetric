@@ -9,6 +9,9 @@ import java.util.logging.Logger;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import info.ganglia.jmxetric.processnamesolver.ProcessNameSolver;
+import info.ganglia.jmxetric.processnamesolver.ProcessNameSolverFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -19,7 +22,7 @@ import org.xml.sax.InputSource;
  * added to the JMXetricAgent.
  */
 public class JMXetricXmlConfigurationService extends XMLConfigurationService {
-	private static Logger log = Logger.getLogger(JMXetricAgent.class.getName());
+	private static final Logger LOG = Logger.getLogger(JMXetricAgent.class.getName());
 
 	/**
 	 * agent that is configured using the XML file
@@ -29,7 +32,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 	/**
 	 * XML configuration source
 	 */
-	private InputSource inputSource;
+	private Document document;
 
 	/**
 	 * name that is associated with all declared metrics
@@ -37,9 +40,9 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 	private String processName;
 
 	public JMXetricXmlConfigurationService(JMXetricAgent agent,
-			InputSource inputSource, String processName) {
+			Document document, String processName) {
 		this.agent = agent;
-		this.inputSource = inputSource;
+		this.document = document;
 		this.processName = processName;
 	}
 
@@ -64,11 +67,22 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 			return;
 		}
 		processName = "";
-		Node jvm = getXmlNode("/jmxetric-config/jvm", inputSource);
-		if (jvm != null) {
-			processName = jvm.getAttributes().getNamedItem("process")
-					.getNodeValue();
+		NodeList base = getXmlNodeList("/jmxetric-config/jvm/process-name-solvers", document);
+		NodeList processNameSolvers = getXmlNodeSet("process-name-solver", base.item(0)); // only one set expected.
+		if (processNameSolvers != null) {
+			for (int i = 0; i < processNameSolvers.getLength(); i++) {
+				Node processNameSolverNode = processNameSolvers.item(i);
+				ProcessNameSolver processNameSolver = makeProcessNameSolver(processNameSolverNode);
+				processName = processNameSolver.solve();
+				if(processName != null) {
+					break;
+				}
+			}
+			if( processName == null) {
+				processName = "UnknownProcess";
+			}
 		}
+		LOG.info("Process name report will be " + processName);
 	}
 
 	/**
@@ -82,7 +96,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 			Exception {
 		// Gets the config for the samplers
 		NodeList samples = getXmlNodeList("/jmxetric-config/sample",
-				inputSource);
+				document);
 		for (int i = 0; i < samples.getLength(); i++) {
 			Node sample = samples.item(i);
 			MBeanSampler mbSampler = makeMBeanSampler(sample);
@@ -158,7 +172,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 		String mBeanName = selectParameterFromNode(mBean, "name", null);
 		String mBeanPublishName = selectParameterFromNode(mBean, "pname", "");
 		String mBeanDMax = selectParameterFromNode(mBean, "dmax", sampleDMax);
-		log.finer("Mbean is " + mBeanName);
+		LOG.finer("Mbean is " + mBeanName);
 
 		NodeList attrs = getXmlNodeSet("attribute", mBean);
 		List<MBeanAttribute> attributes = new Vector<MBeanAttribute>();
@@ -234,7 +248,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 			Node composite = composites.item(l);
 			mba = makeMBeanCompositeAttribute(composite, mBeanName,
 					mBeanPublishName, mBeanDMax, name);
-			log.finer("Attr is " + name);
+			LOG.finer("Attr is " + name);
 			mbas.add(mba);
 		}
 		return mbas;
@@ -274,6 +288,13 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 			return new MBeanAttribute(processName, attrName, name, gType,
 					units, gSlope, metricName, dMaxInt);
 		}
+	}
+
+	private ProcessNameSolver makeProcessNameSolver(Node processNameSolverNode) {
+		String type = selectParameterFromNode(processNameSolverNode, "type", null);
+		String param = selectParameterFromNode(processNameSolverNode, "value", null);
+		ProcessNameSolver processNameSolver = ProcessNameSolverFactory.create(type, param);
+		return processNameSolver;
 	}
 
 	/**

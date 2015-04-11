@@ -27,13 +27,6 @@ class MBeanHolder {
 		objectName = new ObjectName(name);
 	}
 
-	public void addAttribute(String attributeName, String compositeName,
-			GMetricType type, GMetricSlope slope, String units,
-			String publishName, int dmax) {
-		attributes.add(new MBeanAttribute(mBeanSampler, process, attributeName,
-				compositeName, type, units, slope, publishName, dmax));
-	}
-
 	public void addAttribute(MBeanAttribute attr) {
 		attributes.add(attr);
 	}

@@ -33,9 +33,10 @@ public class JMXetricAgent extends GMonitor {
      * @param args Not used
      */
     public static void main(String[] args) throws Exception {
+        System.out.println("Started Testing thread");
         while( true ) {
-           Thread.sleep(1000*60*5);
-           System.out.println("Test wakeup");
+           Thread.sleep(1000*10);
+           System.out.print(".");
         }
     }
     /**

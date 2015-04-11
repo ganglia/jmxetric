@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -42,7 +43,7 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	/**
 	 * the XML configuration file source
 	 */
-	private final InputSource inputSource;
+	private final Document document;
 
 	/**
 	 * command line arguments that was passed in
@@ -51,9 +52,9 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 
 	private Node ganglia;
 
-	public GangliaXmlConfigurationService(InputSource inputSource,
+	public GangliaXmlConfigurationService(Document document,
 			CommandLineArgs args) {
-		this.inputSource = inputSource;
+		this.document = document;
 		this.args = args;
 	}
 
@@ -67,7 +68,7 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	public GMetric getConfig() throws IOException, XPathExpressionException {
 		// TODO what happens when the node cannot be found? do we use all
 		// default values?
-		ganglia = getXmlNode("/jmxetric-config/ganglia", inputSource);
+		ganglia = getXmlNode("/jmxetric-config/ganglia", document);
 		// Gets the config for ganglia
 		// Note that the ganglia config needs to be found before the samplers
 		// are created.
@@ -191,7 +192,7 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	 * @throws XPathExpressionException
 	 */
 	String getConfigString() throws XPathExpressionException {
-		ganglia = getXmlNode("/jmxetric-config/ganglia", inputSource);
+		ganglia = getXmlNode("/jmxetric-config/ganglia", document);
 		String hostname = getHostName();
 		int port = getPort();
 		UDPAddressingMode addressingMode = getAddressingMode();
