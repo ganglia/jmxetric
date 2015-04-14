@@ -66,7 +66,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 		if (processName != null) {
 			return;
 		}
-		processName = "";
+		processName = "UnknownProcess";
 		NodeList base = getXmlNodeList("/jmxetric-config/jvm/process-name-solvers", document);
 		NodeList processNameSolvers = getXmlNodeSet("process-name-solver", base.item(0)); // only one set expected.
 		if (processNameSolvers != null) {
@@ -82,7 +82,7 @@ public class JMXetricXmlConfigurationService extends XMLConfigurationService {
 				processName = "UnknownProcess";
 			}
 		}
-		LOG.info("Process name report will be " + processName);
+		LOG.info("Process name reported will be " + processName);
 	}
 
 	/**

@@ -1,38 +1,47 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE jmxetric-config [
-   <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>
-   <!ELEMENT sample (mbean)*>
-      <!ATTLIST sample delay CDATA #REQUIRED>
-      <!ATTLIST sample initialdelay CDATA "0">
-      <!ATTLIST sample dmax CDATA "0" >
-   <!ELEMENT mbean (attribute)*>
-      <!ATTLIST mbean name CDATA #REQUIRED>
-      <!ATTLIST mbean pname CDATA #REQUIRED>
-      <!ATTLIST mbean dmax CDATA "0" >
-   <!ELEMENT attribute (composite*)>
-      <!ATTLIST attribute name CDATA #REQUIRED>
-      <!ATTLIST attribute type CDATA "" >
-      <!ATTLIST attribute units CDATA "" >
-      <!ATTLIST attribute pname CDATA "" >
-      <!ATTLIST attribute slope CDATA "both" >
-      <!ATTLIST attribute dmax CDATA "0" >
-   <!ELEMENT composite EMPTY>
-      <!ATTLIST composite name CDATA #REQUIRED>
-      <!ATTLIST composite type CDATA "" >
-      <!ATTLIST composite units CDATA "" >
-      <!ATTLIST composite pname CDATA "" >
-      <!ATTLIST composite slope CDATA "both" >
-      <!ATTLIST composite dmax CDATA "0" >
-   <!ELEMENT ganglia EMPTY>
-      <!ATTLIST ganglia hostname CDATA #REQUIRED>
-      <!ATTLIST ganglia port CDATA #REQUIRED>
-      <!ATTLIST ganglia mode CDATA #REQUIRED>
-      <!ATTLIST ganglia wireformat31x CDATA #REQUIRED>
-   <!ELEMENT jvm EMPTY>
-      <!ATTLIST jvm process CDATA "">
-]>
+		<!ELEMENT jmxetric-config (sample|ganglia|jvm)*>
+		<!ELEMENT sample (mbean)*>
+		<!ATTLIST sample delay CDATA #REQUIRED>
+		<!ATTLIST sample initialdelay CDATA "0">
+		<!ATTLIST sample dmax CDATA "0" >
+		<!ELEMENT mbean (attribute)*>
+		<!ATTLIST mbean name CDATA #REQUIRED>
+		<!ATTLIST mbean pname CDATA #REQUIRED>
+		<!ATTLIST mbean dmax CDATA "0" >
+		<!ELEMENT attribute (composite*)>
+		<!ATTLIST attribute name CDATA #REQUIRED>
+		<!ATTLIST attribute type CDATA "" >
+		<!ATTLIST attribute units CDATA "" >
+		<!ATTLIST attribute pname CDATA "" >
+		<!ATTLIST attribute slope CDATA "both" >
+		<!ATTLIST attribute dmax CDATA "0" >
+		<!ELEMENT composite EMPTY>
+		<!ATTLIST composite name CDATA #REQUIRED>
+		<!ATTLIST composite type CDATA "" >
+		<!ATTLIST composite units CDATA "" >
+		<!ATTLIST composite pname CDATA "" >
+		<!ATTLIST composite slope CDATA "both" >
+		<!ATTLIST composite dmax CDATA "0" >
+		<!ELEMENT ganglia EMPTY>
+		<!ATTLIST ganglia hostname CDATA #REQUIRED>
+		<!ATTLIST ganglia port CDATA #REQUIRED>
+		<!ATTLIST ganglia mode CDATA #REQUIRED>
+		<!ATTLIST ganglia wireformat31x CDATA #REQUIRED>
+		<!ELEMENT jvm (process-name-solvers)*>
+		<!ELEMENT process-name-solvers (process-name-solver)+>
+		<!ELEMENT process-name-solver EMPTY>
+		<!ATTLIST process-name-solver type (string|environment-variable|property-variable) "string" >
+		<!ATTLIST process-name-solver value CDATA #REQUIRED >
+		]>
 <jmxetric-config>
-	<jvm process="ProcessName"/>
+	<jvm>
+		<process-name-solvers>
+			<process-name-solver type="environment-variable" value="APPNAME" />
+			<process-name-solver type="property-variable" value="app_name" />
+			<process-name-solver type="string" value="MyProcess" />
+		</process-name-solvers>
+	</jvm>
 	<sample delay="3">
 		<mbean name="java.lang:type=Memory" pname="Memory">
 			<attribute name="HeapMemoryUsage">
@@ -63,7 +72,7 @@
 				<composite name="name" pname="Composite_name" type="int32" units="bytes" />
 			</attribute>
 		</mbean>
-		
+
 		<mbean name="java.lang:type=Threading" pname="Threading" >
 			<attribute name="ThreadCount" type="int16" />
 			<attribute name="DaemonThreadCount" type="int16" />
@@ -74,10 +83,10 @@
 			<attribute name="DaemonThreadCount" type="int16" />
 		</mbean>
 
-        <mbean name="java.lang:type=OperatingSystem" pname="OS" >
-            <attribute name="ProcessCpuTime" type="int32" slope="positive"/>
-        </mbean>
-                             
+		<mbean name="java.lang:type=OperatingSystem" pname="OS" >
+			<attribute name="ProcessCpuTime" type="int32" slope="positive"/>
+		</mbean>
+
 	</sample>
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
 </jmxetric-config>
