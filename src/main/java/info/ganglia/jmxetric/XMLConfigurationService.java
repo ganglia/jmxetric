@@ -2,8 +2,7 @@ package info.ganglia.jmxetric;
 
 import info.ganglia.gmetric4j.gmetric.GMetric;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -23,8 +22,13 @@ import org.xml.sax.InputSource;
  */
 public class XMLConfigurationService {
 
+	/**
+	 * XML Configuration files could go in /etc/ganglia.
+	 */
+	public static final String GANGLIA_CONFIG_HOME = "/etc/ganglia/";
 	private static final Logger LOG = Logger.getLogger(XMLConfigurationService.class.getName());
 	private final static XPath xpath = XPathFactory.newInstance().newXPath();
+	private final static String DEFAULT_CONFIGURATION = "default_jmxetric.xml";
 
 	/**
 	 * Configures the JMXetricAgent based on the supplied agentArgs Command line
@@ -41,15 +45,7 @@ public class XMLConfigurationService {
 			throws Exception {
 		CommandLineArgs args = new CommandLineArgs(agentArgs);
 
-		InputSource inputSource;
-		final InputStream is = ClassLoader.getSystemResourceAsStream(args.getConfig());
-		if(is != null) {
-			LOG.info("loading " + args.getConfig() + " from the classpath");
-			inputSource = new InputSource(is);
-		} else {
-			LOG.info("loading " + args.getConfig() + " from the file system");
-			inputSource = new InputSource(args.getConfig());
-		}
+		InputSource inputSource = maketInputSource(args.getConfig());
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -58,6 +54,38 @@ public class XMLConfigurationService {
 		configureGanglia(agent, document, args);
 
 		configureJMXetric(agent, document, args);
+	}
+
+	private static InputSource maketInputSource(String configFilename) {
+		final InputStream is = ClassLoader.getSystemResourceAsStream(configFilename);
+		if(is != null) {
+			LOG.info("loading " + configFilename + " from the classpath");
+			return new InputSource(is);
+		}
+
+		final File fis = new File(configFilename);
+		if( fis.exists() && fis.isFile()) {
+			LOG.info("loading " + configFilename + " from the file system");
+			return new InputSource(configFilename);
+		}
+
+//		File fisExt = new File(System.getProperty("java.home") + "/lib/ext/" + configFilename);
+		File fisExt = new File(GANGLIA_CONFIG_HOME + configFilename);
+		if( fisExt.exists() && fisExt.isFile()) {
+			LOG.info("loading " + fisExt.toString() + " from the ext directory");
+			try {
+				return new InputSource(new FileInputStream(fisExt));
+			} catch (FileNotFoundException e) {
+				throw new IllegalStateException("Cannot find " + configFilename, e);
+			}
+		}
+		final InputStream defaultIs = ClassLoader.getSystemResourceAsStream(DEFAULT_CONFIGURATION);
+		if(is != null) {
+			LOG.info("loading " + DEFAULT_CONFIGURATION + " from the classpath");
+			return new InputSource(is);
+		} else {
+			throw new IllegalStateException("Cannot find " + DEFAULT_CONFIGURATION);
+		}
 	}
 
 	private static void configureGanglia(JMXetricAgent agent,
