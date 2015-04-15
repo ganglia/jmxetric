@@ -10,7 +10,7 @@ public interface ProcessNameSolver {
     /**
      * Solve the process name.
      *
-     * @return a String or null of the solver cannot calculate a name with the
+     * @return a String or null if the solver cannot calculate a name with the
      * implemented strategy.
      */
     String solve();
