@@ -4,13 +4,12 @@ import info.ganglia.gmetric4j.Publisher;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 
-import java.lang.management.ManagementFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
+import java.lang.management.ManagementFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Data structure used to sample one attribute

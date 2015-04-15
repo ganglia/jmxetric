@@ -2,19 +2,16 @@ package info.ganglia.jmxetric;
 
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
-
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import javax.xml.xpath.XPathExpressionException;
-
 import info.ganglia.jmxetric.processnamesolver.ProcessNameSolver;
 import info.ganglia.jmxetric.processnamesolver.ProcessNameSolverFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+
+import javax.xml.xpath.XPathExpressionException;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 /**
  * Configures JMXetric using an XML file. The XML file is read and MBeanSamplers

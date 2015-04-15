@@ -1,12 +1,8 @@
 package info.ganglia.jmxetric;
 
-import info.ganglia.gmetric4j.gmetric.GMetricSlope;
-import info.ganglia.gmetric4j.gmetric.GMetricType;
-
+import javax.management.ObjectName;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.management.ObjectName;
 
 /**
  * Data structure to hold and query mbean

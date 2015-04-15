@@ -2,15 +2,12 @@ package info.ganglia.jmxetric;
 
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
-
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import javax.xml.xpath.XPathExpressionException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
+
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Configures JMXetricAgent based on command line arguments and parameters
@@ -97,7 +94,6 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 		buf.append(" v31x=").append(v31x);
 		buf.append(" spoof=").append(spoof);
 		log.fine(buf.toString());
-		System.out.println(buf.toString());
 		return new GMetric(hostname, port, addressingMode, DEFAULT_TTL, v31x,
 				null, spoof);
 	}
