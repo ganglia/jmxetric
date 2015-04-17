@@ -1,13 +1,16 @@
 package info.ganglia.jmxetric;
 
-
 import info.ganglia.gmetric4j.GMonitor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.instrument.Instrumentation;
-// import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
- * JMXetricAgent is a JVM agent that will sample MBean attributes on a periodic basis, 
+ * JMXetricAgent is a JVM agent that will sample MBean attributes on a periodic basis,
  * publishing the value of those attributes to the Ganglia gmond process.
  * <br>
  * Use:<br>
@@ -25,17 +28,18 @@ import java.lang.instrument.Instrumentation;
  * </table>
  */
 public class JMXetricAgent extends GMonitor {
-    // private static Logger log =
-    //   Logger.getLogger(JMXetricAgent.class.getName());
+    private static final String JMETRIX_LOGGING_PROPERTIES="jmxetric.logging.properties";
+    private static Logger log = Logger.getLogger(JMXetricAgent.class.getName());
    /**
      * A log running, trivial main method for test purposes
      * premain method
      * @param args Not used
      */
     public static void main(String[] args) throws Exception {
+        System.out.println("Started Testing thread");
         while( true ) {
-           Thread.sleep(1000*60*5);
-           System.out.println("Test wakeup");
+           Thread.sleep(1000*10);
+           System.out.print(".");
         }
     }
     /**
@@ -44,7 +48,10 @@ public class JMXetricAgent extends GMonitor {
      * @param inst
      */
     public static void premain(String agentArgs, Instrumentation inst) {
-        System.out.println(STARTUP_NOTICE) ;
+        configureLog();
+        log.info(STARTUP_NOTICE);
+        log.fine("JAVA_TOOL_OPTIONS=" + System.getenv("JAVA_TOOL_OPTIONS"));
+
         JMXetricAgent a = null ;
         try {
             a = new JMXetricAgent();
@@ -55,6 +62,19 @@ public class JMXetricAgent extends GMonitor {
             ex.printStackTrace();
         }
     }
-    
+
+    private static void configureLog() {
+        try {
+            InputStream is = ClassLoader.getSystemResourceAsStream(JMETRIX_LOGGING_PROPERTIES);
+            log.setLevel(Level.OFF);
+            LogManager.getLogManager().readConfiguration(is);
+//            log.addHandler(new java.util.logging.ConsoleHandler());
+            log.setUseParentHandlers(false);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static final String STARTUP_NOTICE="JMXetricAgent instrumented JVM, see https://github.com/ganglia/jmxetric";
 }

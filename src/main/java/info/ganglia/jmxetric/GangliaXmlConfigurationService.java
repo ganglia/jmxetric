@@ -2,14 +2,12 @@ package info.ganglia.jmxetric;
 
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
-
-import java.io.IOException;
-import java.util.logging.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPathExpressionException;
-
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Configures JMXetricAgent based on command line arguments and parameters
@@ -42,7 +40,7 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	/**
 	 * the XML configuration file source
 	 */
-	private final InputSource inputSource;
+	private final Document document;
 
 	/**
 	 * command line arguments that was passed in
@@ -51,9 +49,9 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 
 	private Node ganglia;
 
-	public GangliaXmlConfigurationService(InputSource inputSource,
+	public GangliaXmlConfigurationService(Document document,
 			CommandLineArgs args) {
-		this.inputSource = inputSource;
+		this.document = document;
 		this.args = args;
 	}
 
@@ -67,7 +65,7 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	public GMetric getConfig() throws IOException, XPathExpressionException {
 		// TODO what happens when the node cannot be found? do we use all
 		// default values?
-		ganglia = getXmlNode("/jmxetric-config/ganglia", inputSource);
+		ganglia = getXmlNode("/jmxetric-config/ganglia", document);
 		// Gets the config for ganglia
 		// Note that the ganglia config needs to be found before the samplers
 		// are created.
@@ -96,7 +94,6 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 		buf.append(" v31x=").append(v31x);
 		buf.append(" spoof=").append(spoof);
 		log.fine(buf.toString());
-		System.out.println(buf.toString());
 		return new GMetric(hostname, port, addressingMode, DEFAULT_TTL, v31x,
 				null, spoof);
 	}
@@ -191,7 +188,7 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	 * @throws XPathExpressionException
 	 */
 	String getConfigString() throws XPathExpressionException {
-		ganglia = getXmlNode("/jmxetric-config/ganglia", inputSource);
+		ganglia = getXmlNode("/jmxetric-config/ganglia", document);
 		String hostname = getHostName();
 		int port = getPort();
 		UDPAddressingMode addressingMode = getAddressingMode();

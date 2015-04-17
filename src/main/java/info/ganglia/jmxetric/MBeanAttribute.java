@@ -4,13 +4,12 @@ import info.ganglia.gmetric4j.Publisher;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 
-import java.lang.management.ManagementFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
+import java.lang.management.ManagementFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Data structure used to sample one attribute
@@ -29,6 +28,7 @@ class MBeanAttribute {
 	private int dmax;
 	private MBeanServer mbs;
 	private MBeanSampler sampler;
+	private boolean warnNotFoundJmxEntries = false; // TODO Implement configuration setter.
 
 	public MBeanAttribute(MBeanSampler sampler, String process,
 			String attributeName, String compositeKey, GMetricType type,
@@ -50,13 +50,6 @@ class MBeanAttribute {
 			GMetricSlope slope, String publishName, int dmax) {
 		this(null, process, attributeName, compositeKey, type, units, slope,
 				publishName, dmax);
-	}
-
-	public MBeanAttribute(String process, String attributeName,
-			GMetricType type, String units, GMetricSlope slope,
-			String publishName, int dmax) {
-		this(process, attributeName, null, type, units, slope, publishName,
-				dmax);
 	}
 
 	public void publish(ObjectName objectName) {
@@ -93,8 +86,10 @@ class MBeanAttribute {
 			}
 
 		} catch (javax.management.InstanceNotFoundException ex) {
-			log.warning("Exception when getting " + objectName + " "
-					+ canonicalName);
+			if(warnNotFoundJmxEntries) {
+				log.warning("Exception when getting " + objectName + " "
+						+ canonicalName);
+			}
 		} catch (Exception ex) {
 			log.log(Level.WARNING, "Exception when getting " + objectName + " "
 					+ canonicalName, ex);
