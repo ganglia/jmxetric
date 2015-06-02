@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE jmxetric-config [
-   <!ELEMENT jmxetric-config (sample|ganglia|jvm)*>
+   <!ELEMENT jmxetric-config (sample|ganglia|jvm|refreshconfig)*>
    <!ELEMENT sample (mbean)*>
       <!ATTLIST sample delay CDATA #REQUIRED>
       <!ATTLIST sample initialdelay CDATA "0">
@@ -28,6 +28,9 @@
       <!ATTLIST ganglia port CDATA #REQUIRED>
       <!ATTLIST ganglia mode CDATA #REQUIRED>
       <!ATTLIST ganglia wireformat31x CDATA #REQUIRED>
+   <!ELEMENT refreshconfig EMPTY>
+      <!ATTLIST refreshconfig enabled CDATA #REQUIRED>
+      <!ATTLIST refreshconfig frequency CDATA #REQUIRED>
    <!ELEMENT jvm EMPTY>
       <!ATTLIST jvm process CDATA "">
 ]>
@@ -74,11 +77,12 @@
 			<attribute name="DaemonThreadCount" type="int16" />
 		</mbean>
 
-        <mbean name="java.lang:type=OperatingSystem" pname="OS" >
-            <attribute name="ProcessCpuTime" type="int32" slope="positive"/>
-        </mbean>
+    <mbean name="java.lang:type=OperatingSystem" pname="OS" >
+      <attribute name="ProcessCpuTime" type="int32" slope="positive"/>
+    </mbean>
                              
 	</sample>
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
+	<refreshconfig enabled="true" frequency="15" />
 </jmxetric-config>
 

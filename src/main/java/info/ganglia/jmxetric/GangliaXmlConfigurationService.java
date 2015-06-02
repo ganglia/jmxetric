@@ -126,9 +126,9 @@ class GangliaXmlConfigurationService extends XMLConfigurationService {
 	/**
 	 * UDPAddressingMode to use for reporting
 	 * 
-	 * @return {@link info.ganglia.gmetric4j.gmetric.UDPAddressingMode.UNICAST}
+	 * @return {@link info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.UNICAST}
 	 *         or
-	 *         {@link info.ganglia.gmetric4j.gmetric.UDPAddressingMode.MULTICAST}
+	 *         {@link info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.MULTICAST}
 	 */
 	private UDPAddressingMode getAddressingMode() {
 		String mode = getGangliaConfig(args.getMode(), ganglia, "mode",

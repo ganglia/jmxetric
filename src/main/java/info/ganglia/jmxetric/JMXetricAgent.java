@@ -45,11 +45,8 @@ public class JMXetricAgent extends GMonitor {
      */
     public static void premain(String agentArgs, Instrumentation inst) {
         System.out.println(STARTUP_NOTICE) ;
-        JMXetricAgent a = null ;
         try {
-            a = new JMXetricAgent();
-            XMLConfigurationService.configure(a, agentArgs);
-            a.start();
+            new BackgroundConfigurationRefresher(agentArgs).initialize();
         } catch ( Exception ex ) {
             // log.severe("Exception starting JMXetricAgent");
             ex.printStackTrace();
