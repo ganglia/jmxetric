@@ -68,13 +68,21 @@ public class BackgroundConfigurationRefresher extends XMLConfigurationService {
         File theFile = new File(args.getConfig());
         InputStream is = new FileInputStream(theFile);
 
-        DigestInputStream dis = new DigestInputStream(is, md);
-        while (dis.read() != -1) {
-            // Place holder to read the entire file
-        }
+        try {
+            DigestInputStream dis = new DigestInputStream(is, md);
+            try {
+                while (dis.read() != -1) {
+                    // NOTE: This reads the entire file, that's why the while loop is blank.
+                }
 
-        byte[] digest = md.digest();
-        return new String(digest).hashCode();
+                byte[] digest = md.digest();
+                return new String(digest).hashCode();
+            } finally {
+                dis.close();
+            }
+        } finally {
+            is.close();
+        }
     }
 
     private void startBackgroundThread() {
